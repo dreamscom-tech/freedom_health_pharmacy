@@ -3,54 +3,39 @@ const conn = require("../database/db");
 
 router.post("/new_product", async (req, res) => {
   let { trade_name, generic_name, description, units, date } = req.body;
+
+  let units_arr = [];
+  for (let i = 0; i < units.length; i++) {
+    let unit = units[i];
+    if (i === 0) {
+      units_arr.push(unit);
+    } else {
+      unit.qty = parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
+      units_arr.push(unit);
+    }
+  }
   conn.query(
-    `SELECT * FROM products_tbl WHERE product_generic_name = ?`,
-    generic_name,
-    (first_err, first_res) => {
-      if (first_err) {
-        console.log(first_err);
-        res.send({ data: "An Error Occured. Try Again", status: false });
+    `INSERT INTO products_tbl SET ?`,
+    {
+      product_trade_name: trade_name || "Not Specified",
+      product_generic_name: generic_name,
+      product_description_name: description,
+      product_units: JSON.stringify(units_arr),
+      product_qty: 0,
+      product_date: date,
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.send({
+          data: "An Error Occured. Try Again",
+          status: false,
+        });
       } else {
-        if (first_res.length > 0) {
-          res.send({ data: "Product Already Exists.", status: false });
-        } else {
-          let units_arr = [];
-          for (let i = 0; i < units.length; i++) {
-            let unit = units[i];
-            if (i === 0) {
-              units_arr.push(unit);
-            } else {
-              unit.qty =
-                parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
-              units_arr.push(unit);
-            }
-          }
-          conn.query(
-            `INSERT INTO products_tbl SET ?`,
-            {
-              product_generic_name: trade_name || "Not Specified",
-              product_generic_name: generic_name,
-              product_description_name: description,
-              product_units: JSON.stringify(units_arr),
-              product_qty: 0,
-              product_date: date,
-            },
-            (err, result) => {
-              if (err) {
-                console.log(err);
-                res.send({
-                  data: "An Error Occured. Try Again",
-                  status: false,
-                });
-              } else {
-                res.send({
-                  data: "Product Added Successfully",
-                  status: true,
-                });
-              }
-            }
-          );
-        }
+        res.send({
+          data: "Product Added Successfully",
+          status: true,
+        });
       }
     }
   );

@@ -1,19 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-// const conn = require("./database/db");
+const conn = require("./database/db");
 const PORT = process.env.port || 5000;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-// app.use("/api/user/admin/", require("./api/admin"));
-// app.use("/api/user/all/", require("./api/users"));
-// app.use("/api/user/sale/", require("./api/sale"));
-
-// app.use(express.static("client/build"));
-app.get("/", (req, res) => {
-  res.send("XamuelUG");
-});
+app.use("/api/user/admin/", require("./api/admin"));
+app.use("/api/user/all/", require("./api/users"));
+app.use("/api/user/sale/", require("./api/sale"));
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);

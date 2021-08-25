@@ -1,1 +1,2 @@
-# freedom_health_pharmacy
+# RXplus
+Pharmacy System In Uganda
