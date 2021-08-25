@@ -88,11 +88,11 @@ class Dashboard extends Component {
             <div className="cards">
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.products.length}</h1>
+                  <h1>{this.state.expiry_products.length}</h1>
                   <span>
                     Medicines <br />
                     <span style={{ fontSize: "13px" }}>
-                      Expire in less than 30 days
+                      Expire in less than 90 days
                     </span>
                   </span>
                 </div>
@@ -260,16 +260,6 @@ class Dashboard extends Component {
                         <Link to="/new-customer">
                           <MenuItem onClick={this.handleCloseActions}>
                             New Customer
-                          </MenuItem>
-                        </Link>
-                        <Link to="/">
-                          <MenuItem onClick={this.handleCloseActions}>
-                            All Suppliers
-                          </MenuItem>
-                        </Link>
-                        <Link to="/">
-                          <MenuItem onClick={this.handleCloseActions}>
-                            All Customers
                           </MenuItem>
                         </Link>
                       </Menu>

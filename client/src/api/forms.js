@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const url = "http://localhost:5000/api"; localhost
-const url = "https://freedom-health.dreamscom.tech/api";
+const url = "http://localhost:5000/api";
+// const url = "https://freedom-health.dreamscom.tech/api";
 
 export default class FormsApi {
   async post(i, data) {

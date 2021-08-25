@@ -7,6 +7,7 @@ import NewSale from "../Routes/dispenser/Newsale";
 import AllProducts from "../Routes/dispenser/allProducts";
 import NewPurchase from "../Routes/dispenser/new_purchase";
 import Product from "../Routes/dispenser/product";
+import NewProduct from "../Routes/dispenser/new-product";
 import NotFound from "../components/404";
 
 class Dispenser extends Component {
@@ -23,6 +24,7 @@ class Dispenser extends Component {
             <Route path="/new-sale" exact component={NewSale} />
             <Route path="/all-products" exact component={AllProducts} />
             <Route path="/new-purchase" exact component={NewPurchase} />
+            <Route path="/new-product" exact component={NewProduct} />
             <Route path="/product" exact component={Product} />
             <Route path="*" component={NotFound} />
           </Switch>

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import user from "../app_config";
 import "../design/print_sale.css";
 
 class Print extends Component {
@@ -7,7 +8,16 @@ class Print extends Component {
     this.state = {
       formData: this.props.data,
     };
-    console.log(this.state);
+  }
+
+  getDate() {
+    let date =
+      new Date(Date.now()).getDate() +
+      " / " +
+      (new Date(Date.now()).getMonth() + 1) +
+      " / " +
+      new Date(Date.now()).getFullYear();
+    return date;
   }
 
   getTotals() {
@@ -25,13 +35,15 @@ class Print extends Component {
         <div className="print-ctr">
           <div className="print">
             <div className="print-pharmacy">
-              <span> RXPlus Pharmacy</span>
-              <span>Plot 11 Main Street, Lira City</span>
-              <span>Tel: 0781240411</span>
-              <span>No. 127</span>
+              <span> Freedom Pharmacy</span>
+              <span>Apac Municipality</span>
+              <span>Tel: 0772 344266</span>
             </div>
             <div className="print-title">Sales Receipt</div>
-            <div className="date">Date: July 31, 2021</div>
+            <div className="date">
+              Date:
+              {this.getDate()}
+            </div>
             <div className="content">
               <table>
                 <thead>
@@ -70,7 +82,7 @@ class Print extends Component {
                 </thead>
               </table>
             </div>
-            <div className="attendant">Served By: Xamuel</div>
+            <div className="attendant">Served By: {user.user.username}</div>
           </div>
         </div>
       </>
