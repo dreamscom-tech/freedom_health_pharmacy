@@ -6,7 +6,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
@@ -139,6 +142,32 @@ class Dashboard extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>Expiring in 90 days</h3>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      aria-controls="drug-actions"
+                      aria-haspopup="true"
+                      onClick={this.handleOpenActionsDrugs}
+                    >
+                      Menu
+                      <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
+                        <span className="las la-angle-down"></span>
+                      </span>
+                    </Button>
+                    <Menu
+                      id="drug-actions"
+                      anchorEl={this.state.AnchorElDrugs}
+                      keepMounted
+                      open={Boolean(this.state.AnchorElDrugs)}
+                      onClose={this.handleCloseActionsDrugs}
+                      disableScrollLock={true}
+                    >
+                      <Link to="/new-product">
+                        <MenuItem onClick={this.handleCloseActionsDrugs}>
+                          New Product
+                        </MenuItem>
+                      </Link>
+                    </Menu>
                   </div>
                   <div className="card-body">
                     <table width="100%">
@@ -160,7 +189,7 @@ class Dashboard extends Component {
                             return (
                               <tr key={i}>
                                 <td className="name_cell">
-                                  {v.product_trade_name}
+                                  {v.product_generic_name}
                                 </td>
                                 <td>{v.batch_no}</td>
                                 <td>{v.batch_qty}</td>

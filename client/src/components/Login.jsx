@@ -55,7 +55,7 @@ function Login() {
             margin: "15px 0px",
           }}
         >
-          RX Pharmacy
+          Freedom Pharmacy
         </div>
         <div className="loginCtr">
           <TextField
@@ -125,6 +125,6 @@ function Login() {
 export default Login;
 
 export function Logout() {
-  localStorage.removeItem("token");
+  sessionStorage.removeItem("token");
   window.location.replace("/");
 }

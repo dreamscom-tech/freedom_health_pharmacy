@@ -38,13 +38,16 @@ class NewCustomer extends Component {
       _fcontent[key] = value;
     });
     let api = new FormsApi();
-    let res = await api.post("/user/pharmacy/new_customer", _fcontent);
+    let res = await api.post("/user/sale/new_customer", _fcontent);
     if (res.status === true) {
       this.setState({
         ...this.state,
         message: res.data,
         messageState: "success",
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } else {
       this.setState({
         ...this.state,
@@ -205,27 +208,18 @@ class NewCustomer extends Component {
                                 id="select_address"
                                 defaultValue=""
                               >
-                                <MenuItem value="1">Aduku</MenuItem>
-                                <MenuItem value="2">Lira</MenuItem>
-                                <MenuItem value="3">Gulu</MenuItem>
-                                <MenuItem value="4">Apac</MenuItem>
+                                <MenuItem value="Aduku">Aduku</MenuItem>
+                                <MenuItem value="Lira">Lira</MenuItem>
+                                <MenuItem value="Gulu">Gulu</MenuItem>
+                                <MenuItem value="Apac">Apac</MenuItem>
+                                <MenuItem value="Kampala">Kampala</MenuItem>
                               </Select>
                             </FormControl>
-                            <TextField
-                              name="location"
-                              variant="outlined"
-                              label="Location"
-                              style={{
-                                width: "75%",
-                                margin: "20px",
-                              }}
-                            />
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  ..
                 </form>
               </div>
             </div>
