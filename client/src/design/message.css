@@ -1,0 +1,11 @@
+.message_ctr {
+  display: "flex";
+  justify-content: "space-between";
+  align-items: "center";
+  width: 300px;
+  background-color: "red";
+  color: "white";
+  position: "absolute";
+  top: "15px";
+  z-index: "50";
+}

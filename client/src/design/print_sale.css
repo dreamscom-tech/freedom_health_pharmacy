@@ -1,0 +1,31 @@
+.print-ctr {
+  width: fit-content;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  margin: 10px auto;
+  padding: 15px;
+  border-radius: 5px;
+}
+.print {
+  text-align: center;
+}
+.print-pharmacy > span:first-child {
+  display: block;
+  font-size: 32px;
+}
+.print-pharmacy > span {
+  display: block;
+  font-size: 18px;
+  margin: 2px 0px;
+}
+.print-title {
+  display: block;
+  font-size: 24px;
+}
+.date,
+.attendant {
+  text-align: left;
+  font-size: 15px;
+}
+.content {
+  margin: 15px 0px;
+}

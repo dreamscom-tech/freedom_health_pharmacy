@@ -1,0 +1,105 @@
+.form-header-ctr {
+  width: 95%;
+  margin: 10px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inputCtr {
+  width: 95%;
+  margin: auto;
+}
+.inputCtrPaymentsDepart {
+  width: 55%;
+  margin: auto;
+}
+.inputs_ctr {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  margin: 15px auto;
+  display: flex;
+  justify-content: space-around;
+}
+/*inputs for new product*/
+.inputs_ctr_np {
+  width: 100%;
+  margin: 15px auto;
+  display: flex;
+  justify-content: space-around;
+}
+.inputs_ctr_np > div {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+.inputs_right_np {
+  flex: 2;
+  margin-left: 10px;
+}
+.inputs_left_np {
+  flex: 1;
+  margin-right: 10px;
+}
+.tbl_ctr_np {
+  width: 95%;
+  margin: auto;
+  /* overflow-x: scroll; */
+}
+td {
+  width: 25% !important;
+}
+/*inputs for new product*/
+.inpts_center {
+  flex: 1;
+}
+.inpts_on_left {
+  flex: 1;
+}
+.inpts_on_right {
+  flex: 1;
+}
+/*name cell*/
+.name_cell {
+  max-width: 150px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: green;
+}
+/*name cell*/
+/*finish up ctr*/
+
+/*finish up ctr*/
+@media screen and (max-width: 1024px) {
+  .form-header-ctr {
+    width: 100%;
+    align-items: center;
+  }
+
+  .inputCtr {
+    width: 100%;
+    margin: auto;
+  }
+  .inputs_ctr {
+    flex-direction: column;
+  }
+  /*Payments Responsive*/
+  .card-header-payments {
+    justify-content: flex-end;
+  }
+  .class_payment_header {
+    display: none;
+  }
+  .inputCtrPaymentsDepart {
+    width: 75%;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  /* payments responsive */
+  .inputCtrPaymentsDepart {
+    width: 100%;
+    margin: auto;
+  }
+}

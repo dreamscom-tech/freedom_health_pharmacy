@@ -1,0 +1,53 @@
+:root {
+  --main-color: #4671ff;
+  --color-dark: #1d2231;
+  --text-grey: #8390a2;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style-type: none;
+  text-decoration: none;
+  font-family: "Ubuntu", sans-serif;
+}
+body {
+  background-color: #f1f5f9;
+}
+/**
+  Buttons
+*/
+
+.btn-span {
+  padding: 7px 15px !important;
+}
+.btn {
+  padding: 15px 15px;
+  width: 150px;
+  font-size: 15px;
+  background-color: var(--main-color);
+  border-radius: 5px;
+  height: 40px;
+  outline: none;
+  border: none;
+  color: #fff;
+  margin: 5px;
+  cursor: pointer;
+}
+.btn:hover {
+  opacity: 0.7;
+}
+.btn.btn-sw {
+  width: 80px;
+  height: 30px;
+  padding: 5px;
+  margin: 0px;
+}
+.btn.btn-faint {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: rgb(0, 0, 0);
+}
+/**
+  Buttons
+*/
