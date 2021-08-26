@@ -458,6 +458,9 @@ class Finance extends Component {
                         {`Amount Paid: UGX ${this.state.dialog_purchase_data.purchase_amount}`}
                       </td>
                     </tr>
+                    <tr>
+                      {`Made By: ${this.state.dialog_purchase_data.purchase_made_by}`}
+                    </tr>
                   </table>
                 </div>
               </DialogContentText>

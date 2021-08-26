@@ -37,6 +37,7 @@ class NewProduct extends Component {
       units: [],
       new_unit_error: false,
       selling_units: [],
+      empty_name_error: false,
     };
     this.units();
   }
@@ -80,6 +81,16 @@ class NewProduct extends Component {
         message: res.data,
         messageState: "error",
       });
+      if (!content["unit_name"]) {
+        this.setState({
+          ...this.state,
+          open: true,
+          message: "This field is missing",
+          messageState: "error",
+          empty_name_error: true,
+        });
+        return;
+      }
     }
   };
 
@@ -97,6 +108,16 @@ class NewProduct extends Component {
         open: true,
         message: "No Selling Units Registered",
         messageState: "error",
+      });
+      return;
+    }
+    if (!_fcontent["description"] || !_fcontent["generic_name"]) {
+      this.setState({
+        ...this.state,
+        open: true,
+        message: "Some fields are missing",
+        messageState: "error",
+        empty_name_error: true,
       });
       return;
     }
@@ -132,6 +153,7 @@ class NewProduct extends Component {
       open: false,
       message: "Please Wait...",
       messageState: "info",
+      empty_name_error: false,
     });
   };
 
@@ -230,6 +252,7 @@ class NewProduct extends Component {
                         <div className="inputs_ctr_np">
                           <div className="inputs_left_np">
                             <TextField
+                              error={this.state.empty_name_error}
                               name="generic_name"
                               variant="outlined"
                               label="Generic Name"
@@ -239,6 +262,7 @@ class NewProduct extends Component {
                               }}
                             />
                             <TextField
+                              error={this.state.empty_name_error}
                               name="description"
                               variant="outlined"
                               label="Medicine Description"
@@ -509,6 +533,7 @@ class NewProduct extends Component {
             <DialogContent>
               <DialogContentText>
                 <TextField
+                  error={this.state.empty_name_error}
                   name="unit_name"
                   variant="standard"
                   label="Unit Name"

@@ -40,10 +40,10 @@ function Header() {
           </label>
           <span className="health_unit_name">Freedom Health</span>
         </h2>
-        <div className="search-wrapper">
+        {/* <div className="search-wrapper">
           <span className="las la-search"></span>
           <input type="search" name="" id="" placeholder="Search here" />
-        </div>
+        </div> */}
         <div className="" style={{ display: "flex", alignItems: "center" }}>
           <div className="" style={{ fontSize: "42px", marginRight: 20 }}>
             <i className="las la-bell"></i>

@@ -18,7 +18,7 @@ import Header from "./components/Header";
 import FormsApi from "../../api/forms";
 import UsersApi from "../../api/users";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-
+import user from "../../app_config";
 //print
 import ReactToPrint from "react-to-print";
 import Print from "../../components/print";
@@ -74,6 +74,7 @@ class NewPurchase extends Component {
           ...this.state._content,
           products_purchased: this.state.formData,
           date: Date.now(),
+          user: user.user.username,
         },
       });
     }

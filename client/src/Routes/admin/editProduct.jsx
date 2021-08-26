@@ -166,25 +166,6 @@ class EditProduct extends Component {
                         <div className="inputs_ctr_np">
                           <div className="inputs_left_np">
                             <TextField
-                              name="trade_name"
-                              variant="outlined"
-                              helperText="Trade Name"
-                              value={this.state.product.product_generic_name}
-                              style={{
-                                width: "75%",
-                                margin: "20px",
-                              }}
-                              onChange={(e) => {
-                                this.setState({
-                                  ...this.state,
-                                  product: {
-                                    ...this.state.product,
-                                    product_generic_name: e.target.value,
-                                  },
-                                });
-                              }}
-                            />
-                            <TextField
                               name="generic_name"
                               variant="outlined"
                               helperText="Generic Name"

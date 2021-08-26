@@ -3,18 +3,18 @@ const conn = require("../database/db");
 
 router.post("/new_product", async (req, res) => {
   let { generic_name, description, units, date } = req.body;
-
   let units_arr = [];
   for (let i = 0; i < units.length; i++) {
     let unit = units[i];
-    if (i === 0) {
-      units_arr.push(unit);
-    } else {
-      unit.qty = parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
-      units_arr.push(unit);
+    if (unit.qty && unit.selling_unit) {
+      if (i === 0) {
+        units_arr.push(unit);
+      } else {
+        unit.qty = parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
+        units_arr.push(unit);
+      }
     }
   }
-
   conn.query(
     `SELECT * FROM products_tbl WHERE product_generic_name = ? 
     AND product_description_name = ?`,
@@ -82,7 +82,6 @@ router.post("/new_supplier", async (req, res) => {
             supplier_lastname: supplier_lastname,
             supplier_contact: supplier_contact,
             supplier_location: supplier_location,
-            supplier_address: supplier_address,
             date_registered: date,
           },
           (err, result) => {
@@ -366,7 +365,7 @@ router.post("/new_sale", async (req, res) => {
 });
 
 router.post("/new_purchase", async (req, res) => {
-  let { total_amount, discount, pay_amount, products_purchased, date } =
+  let { total_amount, discount, pay_amount, products_purchased, date, user } =
     req.body;
   products_purchased.forEach((e) => {
     let id = parseInt(e.product_id);
@@ -468,6 +467,7 @@ router.post("/new_purchase", async (req, res) => {
       purchase_discount: parseFloat(discount) || 0,
       purchase_amount: parseFloat(pay_amount),
       purchase_t_amount: parseFloat(total_amount),
+      purchase_made_by: user,
       purchase_date: date,
     },
     (first_err, first_res) => {
