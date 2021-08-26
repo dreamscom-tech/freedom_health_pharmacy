@@ -3,18 +3,18 @@ const conn = require("../database/db");
 
 router.post("/new_product", async (req, res) => {
   let { generic_name, description, units, date } = req.body;
-
   let units_arr = [];
   for (let i = 0; i < units.length; i++) {
     let unit = units[i];
-    if (i === 0) {
-      units_arr.push(unit);
-    } else {
-      unit.qty = parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
-      units_arr.push(unit);
+    if (unit.qty && unit.selling_unit) {
+      if (i === 0) {
+        units_arr.push(unit);
+      } else {
+        unit.qty = parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
+        units_arr.push(unit);
+      }
     }
   }
-
   conn.query(
     `SELECT * FROM products_tbl WHERE product_generic_name = ? 
     AND product_description_name = ?`,
