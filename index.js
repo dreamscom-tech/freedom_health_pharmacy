@@ -12,11 +12,6 @@ app.use("/api/user/sale/", require("./api/sale"));
 
 app.use(express.static("client/build"));
 
-app.use(function (req, res, next) {
-  res.status(404);
-  res.redirect("/");
-});
-
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import user from "../app_config";
 import "../design/print_sale.css";
+import "../assets/fhp.jpg";
 
 class Print extends Component {
   constructor(props) {
@@ -35,8 +36,9 @@ class Print extends Component {
         <div className="print-ctr">
           <div className="print">
             <div className="print-pharmacy">
-              <span> Freedom Pharmacy</span>
-              <span>Apac Municipality</span>
+              <span>FREEDOM HEALTH AND SUPPLIES LTD</span>
+              <span>Plot 7, Chegere Road Apac.</span>
+              <span>Plot P.O.Box 120 Apac</span>
               <span>Tel: 0772 344266</span>
             </div>
             <div className="print-title">Sales Receipt</div>
@@ -45,42 +47,28 @@ class Print extends Component {
               {this.getDate()}
             </div>
             <div className="content">
-              <table>
-                <thead>
-                  <tr>
-                    <td>Name</td>
-                    <td>Qty</td>
-                    <td>Unit Price(Shs)</td>
-                    <td>Total(Shs)</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.formData.length === 0 ? (
-                    <tr>
-                      <td>No Content To Print</td>
-                    </tr>
-                  ) : (
-                    this.state.formData.map((v, i) => {
-                      return (
-                        <tr key={i}>
-                          <td>{v.product_name}</td>
-                          <td>{v.qty}</td>
-                          <td>{v.product_price}</td>
-                          <td>{parseInt(v.product_price) * parseInt(v.qty)}</td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-                <thead>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td>Total</td>
-                    <td>{this.getTotals()}</td>
-                  </tr>
-                </thead>
-              </table>
+              <div className="grid grid-hdr">
+                <div className="grid-row">Name</div>
+                <div className="grid-row">Qty</div>
+                <div className="grid-row">Price(Shs)</div>
+              </div>
+              {this.state.formData.length === 0 ? (
+                <div className="grid">
+                  <div className="grid-row">No Content To Print</div>
+                </div>
+              ) : (
+                this.state.formData.map((v, i) => {
+                  return (
+                    <div className="grid" key={i}>
+                      <div className="grid-row">{v.product_name}</div>
+                      <div className="grid-row">{v.qty}</div>
+                      <div className="grid-row">
+                        {parseInt(v.product_price) * parseInt(v.qty)}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
             <div className="attendant">Served By: {user.user.username}</div>
           </div>

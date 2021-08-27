@@ -39,7 +39,7 @@ class NewSupplier extends Component {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 500);
+      }, 200);
     } else {
       this.setState({
         ...this.state,

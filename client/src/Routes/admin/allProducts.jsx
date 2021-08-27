@@ -57,7 +57,7 @@ class AllProducts extends Component {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 500);
+      }, 200);
     } else {
       this.setState({
         ...this.state,
@@ -124,9 +124,11 @@ class AllProducts extends Component {
                         width: "15%",
                       }}
                       onKeyUp={async (e) => {
-                        const res = await UsersApi.data(
-                          `/user/all/search_batch/${e.target.value}`
-                        );
+                        const res = e.target.value
+                          ? (await UsersApi.data(
+                              `/user/all/search_batch/${e.target.value}`
+                            )) || []
+                          : (await UsersApi.data("/user/all/products")) || [];
                         if (res !== "Error") {
                           this.setState({
                             ...this.state,

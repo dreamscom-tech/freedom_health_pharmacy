@@ -1,5 +1,5 @@
 .print-ctr {
-  width: fit-content;
+  width: 250px;
   border: 1px solid rgba(0, 0, 0, 0.4);
   margin: 10px auto;
   padding: 15px;
@@ -8,24 +8,40 @@
 .print {
   text-align: center;
 }
-.print-pharmacy > span:first-child {
+.print-pharmacy > span:nth-child(1) {
   display: block;
-  font-size: 32px;
+  font-size: 10px;
 }
 .print-pharmacy > span {
   display: block;
-  font-size: 18px;
+  font-size: 7px;
   margin: 2px 0px;
 }
 .print-title {
   display: block;
-  font-size: 24px;
+  margin: 2px 0px;
+  font-size: 10px;
 }
 .date,
 .attendant {
   text-align: left;
-  font-size: 15px;
+  font-size: 8px;
 }
 .content {
   margin: 15px 0px;
+  font-size: 8px;
+}
+.grid {
+  width: 200px;
+  display: flex;
+  justify-content: space-between;
+}
+.grid div:first-child {
+  flex: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left !important;
+}
+.grid-row {
+  flex: 1;
 }

@@ -38,6 +38,7 @@ class NewSale extends Component {
       open: false,
       message: "Please Wait...",
       messageState: "",
+      print: false,
       _content: {},
       form_visible: false,
       active_product_qty: 0,
@@ -53,9 +54,12 @@ class NewSale extends Component {
     };
   }
 
+  print_receipt = () => {
+    return;
+  };
+
   handleSale = async (e) => {
     e.preventDefault();
-    console.log(this.state.batch_index);
     this.setState({ ...this.state, open: true, messageState: "info" });
     const fd = new FormData(e.target);
     let content = {};
@@ -87,7 +91,7 @@ class NewSale extends Component {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 500);
+      }, 200);
     } else {
       this.setState({
         ...this.state,
@@ -135,7 +139,6 @@ class NewSale extends Component {
         message: "Product Added",
         messageState: "success",
         formData: [...this.state.formData, _fcontent],
-        print: true,
         active_drug: null,
       });
     } else {
@@ -157,8 +160,26 @@ class NewSale extends Component {
     }
   };
 
+  IsJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   handleChangeDrugName = (e, v) => {
     if (v) {
+      if (!this.IsJsonString(v.product_units)) {
+        this.setState({
+          ...this.state,
+          open: true,
+          message: "This Product has no Selling Units, Edit It to make a sale",
+          messageState: "warning",
+        });
+        return;
+      }
       this.setState(
         {
           ...this.state,
@@ -607,34 +628,48 @@ class NewSale extends Component {
                   <div className="card-header card-header-payments">
                     <h3 className="class_payment_header">Payment</h3>
                     <div className="">
-                      <ReactToPrint
-                        trigger={() => {
-                          return (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              style={{ marginRight: 10 }}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "17.5px",
-                                  marginRight: "10px",
-                                }}
+                      <FormGroup style={{ display: "inline" }}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              name="print_receipt"
+                              onChange={() => {
+                                this.setState({
+                                  ...this.state,
+                                  print: !this.state.print,
+                                });
+                              }}
+                            />
+                          }
+                          label="Print Receipt"
+                        />
+                      </FormGroup>
+                      {this.state.print ? (
+                        <ReactToPrint
+                          trigger={() => {
+                            return (
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                color="primary"
+                                style={{ marginRight: 10 }}
                               >
-                                <i className="las la-print"></i>
-                              </span>
-                              Print
-                            </Button>
-                          );
-                        }}
-                        content={() => this.componentRef}
-                      />
-                      <Button type="submit" variant="contained" color="primary">
-                        Finish Sale
-                        <span style={{ fontSize: "15px", marginLeft: "10px" }}>
-                          <i className="las la-angle-double-right"></i>
-                        </span>
-                      </Button>
+                                Finish Sale
+                              </Button>
+                            );
+                          }}
+                          content={() => this.componentRef}
+                        />
+                      ) : (
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          style={{ marginRight: 10 }}
+                        >
+                          Finish Sale
+                        </Button>
+                      )}
                     </div>
                   </div>
                   <Finish t={this.getTotals()} />
@@ -703,14 +738,7 @@ function Finish({ t }) {
           marginLeft: "20px",
           marginBottom: "50px",
         }}
-      >
-        <FormGroup>
-          <FormControlLabel
-            control={<Checkbox defaultChecked name="print_receipt" />}
-            label="Print Receipt"
-          />
-        </FormGroup>
-      </FormControl>
+      ></FormControl>
     </div>
   );
 }

@@ -87,7 +87,7 @@ class NewSale extends Component {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 500);
+      }, 200);
     } else {
       this.setState({
         ...this.state,
@@ -156,9 +156,26 @@ class NewSale extends Component {
       this.setState({ ...this.state, products: res === "Error" ? [] : res });
     }
   };
+  IsJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
 
   handleChangeDrugName = (e, v) => {
     if (v) {
+      if (!this.IsJsonString(v.product_units)) {
+        this.setState({
+          ...this.state,
+          open: true,
+          message: "This Product has no Selling Units, Edit It to make a sale",
+          messageState: "warning",
+        });
+        return;
+      }
       this.setState(
         {
           ...this.state,

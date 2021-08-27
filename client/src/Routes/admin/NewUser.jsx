@@ -47,7 +47,7 @@ class New_user extends Component {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 500);
+      }, 200);
     } else {
       this.setState({
         ...this.state,
@@ -193,9 +193,8 @@ class New_user extends Component {
                                 inputProps={{ name: "role" }}
                                 id="select_role"
                                 label="Role"
-                                defaultValue=""
+                                defaultValue="dispenser"
                               >
-                                <MenuItem value="cashier">Cashier</MenuItem>
                                 <MenuItem value="dispenser">Dispenser</MenuItem>
                                 <MenuItem value="admin">Admin</MenuItem>
                               </Select>

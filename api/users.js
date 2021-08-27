@@ -9,10 +9,13 @@ router.get("/suppliers", async (req, res) => {
 });
 
 router.get("/products", async (req, res) => {
-  conn.query(`SELECT * FROM products_tbl`, (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
+  conn.query(
+    `select * from products_tbl order by product_generic_name`,
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
 });
 
 router.get("/sales", async (req, res) => {
@@ -89,7 +92,7 @@ router.get("/my_sales/:id", async (req, res) => {
 
 router.get("/less_qty", (req, res) => {
   conn.query(
-    "select * from products_tbl order by product_qty limit 25",
+    "select * from products_tbl order by product_qty,product_generic_name limit 15",
     (error, result) => {
       if (error) {
         throw error;

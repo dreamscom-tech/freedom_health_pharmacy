@@ -11,7 +11,6 @@ const MYSQL_CONFIG = {
   ssl: {
     ca: fs.readFileSync(path.join(__dirname, "ca.pem")),
   },
-  // socketPath: "/cloudsql/rxplus-project:us-central1:rxplus-instance",
 };
 
 const conn = mysql.createConnection(MYSQL_CONFIG);
