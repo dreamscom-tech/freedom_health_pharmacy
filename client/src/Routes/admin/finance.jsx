@@ -8,15 +8,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import Nav from "./components/Nav";
 import Header from "./components/Header";
 import MuiAlert from "@material-ui/lab/Alert";
 import UsersApi from "../../api/users";
-
-//print
-import ReactToPrint from "react-to-print";
-import Print from "../../components/print";
+import Helper from "../../components/format";
+import { Link } from "react-router-dom";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -26,6 +26,8 @@ class Finance extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      AnchorEl: null,
+      AnchorElDrugs: null,
       open: false,
       open_purchase: false,
       open_sale: false,
@@ -57,13 +59,18 @@ class Finance extends Component {
     res === "Error"
       ? this.setState({ ...this.state, income: 0, sales: [] })
       : res.forEach((e) => {
-          total += e.amount_paid;
           if (
             new Date(parseInt(e.sales_date)).getDate() ===
             new Date(Date.now()).getDate()
           ) {
             today_income += e.amount_paid;
             today_sales.push(e);
+          }
+          if (
+            new Date(parseInt(e.sales_date)).getMonth() ===
+            new Date(Date.now()).getMonth()
+          ) {
+            total += e.amount_paid;
           }
         });
     this.setState({
@@ -82,13 +89,18 @@ class Finance extends Component {
     res === "Error"
       ? this.setState({ ...this.state, expenses: 0, purchases: [] })
       : res.forEach((e) => {
-          total += e.purchase_amount;
           if (
             new Date(parseInt(e.purchase_date)).getDate() ===
             new Date(Date.now()).getDate()
           ) {
             today_expense += e.purchase_amount;
             today_purchases.push(e);
+          }
+          if (
+            new Date(parseInt(e.purchase_date)).getMonth() ===
+            new Date(Date.now()).getMonth
+          ) {
+            total += e.purchase_amount;
           }
         });
     this.setState({
@@ -98,6 +110,19 @@ class Finance extends Component {
       purchases: today_purchases,
     });
   }
+
+  handleOpenActions = (e) => {
+    this.setState({ ...this.state, AnchorEl: e.currentTarget });
+  };
+  handleOpenActionsDrugs = (e) => {
+    this.setState({ ...this.state, AnchorElDrugs: e.currentTarget });
+  };
+  handleCloseActions = () => {
+    this.setState({ ...this.state, AnchorEl: null });
+  };
+  handleCloseActionsDrugs = () => {
+    this.setState({ ...this.state, AnchorElDrugs: null });
+  };
 
   render() {
     return (
@@ -135,7 +160,7 @@ class Finance extends Component {
             <div className="cards">
               <div className="card-single">
                 <div className="">
-                  <h4>UGX {this.state.today_income}</h4>
+                  <h4>UGX {Helper.format(this.state.today_income)}</h4>
                   <span>
                     Sales <br />
                     <span style={{ fontSize: "13px" }}>Today</span>
@@ -147,7 +172,7 @@ class Finance extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h4>UGX {this.state.today_expense}</h4>
+                  <h4>UGX {Helper.format(this.state.today_expense)}</h4>
                   <span>
                     Purchases <br />
                     <span style={{ fontSize: "13px" }}>Today</span>
@@ -159,8 +184,11 @@ class Finance extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h4>UGX {this.state.expenses}</h4>
-                  <span>Total Purchase</span>
+                  <h4>UGX {Helper.format(this.state.expenses)}</h4>
+                  <span>
+                    Total Purchase <br />
+                    <span style={{ fontSize: "13px" }}>This Month</span>
+                  </span>
                 </div>
                 <div className="">
                   <span className="las la-users"> </span>
@@ -168,8 +196,11 @@ class Finance extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h4>UGX {this.state.income}</h4>
-                  <span>Total Income</span>
+                  <h4>UGX {Helper.format(this.state.income)}</h4>
+                  <span>
+                    Total Income <br />
+                    <span style={{ fontSize: "13px" }}>This Month</span>
+                  </span>
                 </div>
                 <div className="">
                   <span className="las la-users"> </span>
@@ -182,28 +213,39 @@ class Finance extends Component {
                   <div className="card-header">
                     <h3>Sales Today</h3>
                     <div className="">
-                      <ReactToPrint
-                        trigger={() => {
-                          return (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              style={{ marginRight: 10 }}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "17.5px",
-                                  marginRight: "10px",
-                                }}
-                              >
-                                <i className="las la-print"></i>
-                              </span>
-                              Print
-                            </Button>
-                          );
-                        }}
-                        content={() => this.componentRef}
-                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        aria-controls="drug-actions"
+                        aria-haspopup="true"
+                        onClick={this.handleOpenActionsDrugs}
+                      >
+                        Menu
+                        <span
+                          style={{ fontSize: "17.5px", marginLeft: "10px" }}
+                        >
+                          <span className="las la-angle-down"></span>
+                        </span>
+                      </Button>
+                      <Menu
+                        id="drug-actions"
+                        anchorEl={this.state.AnchorElDrugs}
+                        keepMounted
+                        open={Boolean(this.state.AnchorElDrugs)}
+                        onClose={this.handleCloseActionsDrugs}
+                        disableScrollLock={true}
+                      >
+                        <Link to="/all-sales">
+                          <MenuItem onClick={this.handleCloseActionsDrugs}>
+                            See Monthly
+                          </MenuItem>
+                        </Link>
+                        <Link>
+                          <MenuItem onClick={this.handleCloseActionsDrugs}>
+                            Download
+                          </MenuItem>
+                        </Link>
+                      </Menu>
                     </div>
                   </div>
                   <div className="card-body">
@@ -224,28 +266,26 @@ class Finance extends Component {
                         ) : (
                           this.state.sales.map((v, i) => {
                             return (
-                              <>
-                                <tr key={i}>
-                                  <td>{v.sales_amount}</td>
-                                  <td>{v.sales_discount}</td>
-                                  <td>{v.amount_paid}</td>
-                                  <td>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={(e) => {
-                                        this.setState({
-                                          ...this.state,
-                                          open_sale: true,
-                                          dialog_data: v,
-                                        });
-                                      }}
-                                    >
-                                      Details
-                                    </Button>
-                                  </td>
-                                </tr>
-                              </>
+                              <tr key={i}>
+                                <td>{v.sales_amount}</td>
+                                <td>{v.sales_discount}</td>
+                                <td>{v.amount_paid}</td>
+                                <td>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => {
+                                      this.setState({
+                                        ...this.state,
+                                        open_sale: true,
+                                        dialog_data: v,
+                                      });
+                                    }}
+                                  >
+                                    Details
+                                  </Button>
+                                </td>
+                              </tr>
                             );
                           })
                         )}
@@ -259,28 +299,39 @@ class Finance extends Component {
                   <div className="card-header">
                     <h3>Purchases Today</h3>
                     <div className="">
-                      <ReactToPrint
-                        trigger={() => {
-                          return (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              style={{ marginRight: 10 }}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "17.5px",
-                                  marginRight: "10px",
-                                }}
-                              >
-                                <i className="las la-print"></i>
-                              </span>
-                              Print
-                            </Button>
-                          );
-                        }}
-                        content={() => this.componentRef}
-                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        aria-controls="reception-actions"
+                        aria-haspopup="true"
+                        onClick={this.handleOpenActions}
+                      >
+                        Menu
+                        <span
+                          style={{ fontSize: "17.5px", marginLeft: "10px" }}
+                        >
+                          <span className="las la-angle-down"></span>
+                        </span>
+                      </Button>
+                      <Menu
+                        id="reception-actions"
+                        anchorEl={this.state.AnchorEl}
+                        keepMounted
+                        open={Boolean(this.state.AnchorEl)}
+                        onClose={this.handleCloseActions}
+                        disableScrollLock={true}
+                      >
+                        <Link to="/all-purchases">
+                          <MenuItem onClick={this.handleCloseActions}>
+                            See Monthly
+                          </MenuItem>
+                        </Link>
+                        <Link>
+                          <MenuItem onClick={this.handleCloseActions}>
+                            Download
+                          </MenuItem>
+                        </Link>
+                      </Menu>
                     </div>
                   </div>
                   <div className="card-body">
@@ -301,28 +352,26 @@ class Finance extends Component {
                         ) : (
                           this.state.purchases.map((v, i) => {
                             return (
-                              <>
-                                <tr key={i}>
-                                  <td>{v.purchase_t_amount}</td>
-                                  <td>{v.purchase_discount}</td>
-                                  <td>{v.purchase_amount}</td>
-                                  <td>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={(e) => {
-                                        this.setState({
-                                          ...this.state,
-                                          open_purchase: true,
-                                          dialog_purchase_data: v,
-                                        });
-                                      }}
-                                    >
-                                      Details
-                                    </Button>
-                                  </td>
-                                </tr>
-                              </>
+                              <tr key={i}>
+                                <td>{v.purchase_t_amount}</td>
+                                <td>{v.purchase_discount}</td>
+                                <td>{v.purchase_amount}</td>
+                                <td>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => {
+                                      this.setState({
+                                        ...this.state,
+                                        open_purchase: true,
+                                        dialog_purchase_data: v,
+                                      });
+                                    }}
+                                  >
+                                    Details
+                                  </Button>
+                                </td>
+                              </tr>
                             );
                           })
                         )}
@@ -358,15 +407,13 @@ class Finance extends Component {
                     {JSON.parse(this.state.dialog_data.products_sold).map(
                       (v, i) => {
                         return (
-                          <>
-                            <tr key={i}>
-                              <td>{v.product_name}</td>
-                              <td>{v.qty}</td>
-                              <td>{v.selling_unit}</td>
-                              <td>{v.product_price}</td>
-                              <td>{v.sale_type}</td>
-                            </tr>
-                          </>
+                          <tr key={i}>
+                            <td className="name_cell">{v.product_name}</td>
+                            <td>{v.qty}</td>
+                            <td>{v.selling_unit}</td>
+                            <td>{v.product_price}</td>
+                            <td>{v.sale_type}</td>
+                          </tr>
                         );
                       }
                     )}
@@ -430,7 +477,7 @@ class Finance extends Component {
                       return (
                         <>
                           <tr key={i}>
-                            <td>{v.product_name}</td>
+                            <td className="name_cell">{v.product_name}</td>
                             <td>{v.qty}</td>
                             <td>{v.selling_unit}</td>
                             <td>{v.cost_price}</td>
@@ -474,12 +521,6 @@ class Finance extends Component {
         ) : (
           <></>
         )}
-        <div style={{ display: "none" }}>
-          <Print
-            ref={(el) => (this.componentRef = el)}
-            data={this.state.sales}
-          />
-        </div>
       </>
     );
   }

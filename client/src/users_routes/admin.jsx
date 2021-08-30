@@ -15,6 +15,8 @@ import Product from "../Routes/admin/product";
 import Edit from "../Routes/admin/editProduct";
 import Finance from "../Routes/admin/finance";
 import Reports from "../Routes/admin/reports";
+import Purchases from "../Routes/admin/allPurchases";
+import Sales from "../Routes/admin/allSales";
 import NotFound from "../components/404";
 
 class Admin extends Component {
@@ -39,7 +41,9 @@ class Admin extends Component {
             <Route path="/edit-product" exact component={Edit} />
             <Route path="/finance" exact component={Finance} />
             <Route path="/reports" exact component={Reports} />
-            <Route path="*" component={NotFound} />
+            <Route path="/all-purchases" exact component={Purchases} />
+            <Route path="/all-sales" exact component={Sales} />
+            <Route path="*" exact component={NotFound} />
           </Switch>
         </div>
       </BrowserRouter>

@@ -4,6 +4,7 @@ import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
 import { Link } from "react-router-dom";
+import Helper from "../../components/format";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -12,13 +13,12 @@ class Dashboard extends Component {
       AnchorEl: null,
       AnchorElDrugs: null,
       products: [],
-      purchase_number: "...",
-      sales_number: "...",
+      sales_number_daily: "...",
+      sales_number_monthly: "...",
       expiry_products: [],
       less_qty_pdts: [],
     };
     this.products();
-    this.purchases();
     this.sales();
     this.expiry_products();
     this.less_qty();
@@ -50,17 +50,31 @@ class Dashboard extends Component {
     }
   }
 
-  async purchases() {
-    const res = (await UsersApi.data("/user/all/purchases")) || [];
-    if (res) {
-      this.setState({ ...this.state, purchase_number: res.length });
-    }
-  }
-
   async sales() {
     const res = (await UsersApi.data("/user/all/sales")) || [];
-    if (res) {
-      this.setState({ ...this.state, sales_number: res.length });
+    if (res !== "Error") {
+      let sales_daily = 0;
+      let sales_monthly = 0;
+      res.forEach((e) => {
+        if (
+          new Date(parseInt(e.sales_date)).getDate() ===
+          new Date(Date.now()).getDate()
+        ) {
+          sales_daily++;
+        }
+        if (
+          new Date(parseInt(e.sales_date)).getMonth() ===
+          new Date(Date.now()).getUTCMonth()
+        ) {
+          sales_monthly++;
+        }
+      });
+
+      this.setState({
+        ...this.state,
+        sales_number_daily: sales_daily,
+        sales_number_monthly: sales_monthly,
+      });
     }
   }
 
@@ -88,7 +102,7 @@ class Dashboard extends Component {
             <div className="cards">
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.expiry_products.length}</h1>
+                  <h3>{Helper.format(this.state.expiry_products.length)}</h3>
                   <span>
                     Medicines <br />
                     <span style={{ fontSize: "13px" }}>
@@ -102,7 +116,7 @@ class Dashboard extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.sales_number}</h1>
+                  <h3>{Helper.format(this.state.sales_number_monthly)}</h3>
                   <span>Sales</span>
                   <br />
                   <span style={{ fontSize: "13px" }}>Made This Month</span>
@@ -113,7 +127,7 @@ class Dashboard extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.purchase_number}</h1>
+                  <h3>{Helper.format(this.state.sales_number_daily)}</h3>
                   <span>Sales</span>
                   <br />
                   <span style={{ fontSize: "13px" }}>Made Today</span>
@@ -124,7 +138,7 @@ class Dashboard extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.products.length}</h1>
+                  <h3>{Helper.format(this.state.products.length)}</h3>
                   <span>Medicines</span>
                   <br />
                   <span style={{ fontSize: "13px" }}>Registered</span>
