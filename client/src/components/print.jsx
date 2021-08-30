@@ -30,10 +30,11 @@ class Print extends Component {
     }
     return total;
   }
+
   render() {
     return (
       <>
-        <div className="print-ctr">
+        <div className="print-ctr" style={{ margin: "0", padding: "0" }}>
           <div className="print">
             <div className="print-pharmacy">
               <span>FREEDOM HEALTH AND SUPPLIES LTD</span>

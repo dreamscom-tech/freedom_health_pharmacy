@@ -1,5 +1,7 @@
 .print-ctr {
-  width: 250px;
+  /* width: 210px;
+   */
+  width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.4);
   margin: 10px auto;
   padding: 15px;
@@ -32,7 +34,9 @@
   font-size: 8px;
 }
 .grid {
-  width: 200px;
+  /* width: 200px; */
+  width: 95%;
+  margin: auto;
   display: flex;
   justify-content: space-between;
 }
@@ -44,4 +48,36 @@
 }
 .grid-row {
   flex: 1;
+}
+
+@media all {
+  .page-break {
+    display: none;
+  }
+}
+
+@media print {
+  html,
+  body {
+    width: 100%;
+    height: initial !important;
+    overflow: initial !important;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media print {
+  .page-break {
+    margin-top: 1rem;
+    display: block;
+    page-break-before: auto;
+  }
+}
+
+@page {
+  size: auto;
+  margin: 5mm;
+}
+
+@media print {
 }

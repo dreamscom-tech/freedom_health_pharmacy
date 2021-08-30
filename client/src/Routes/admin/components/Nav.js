@@ -81,7 +81,7 @@ class Nav extends Component {
                       } _a_replaced`}
                     >
                       <span className="las la-comment"></span>
-                      <span>Finance</span>
+                      <span>Reports</span>
                     </span>
                   </Link>
                 </li>

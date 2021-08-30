@@ -12,6 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "electron": "^13.2.3",
+    "electron-pos-printer": "^1.2.4",
+    "escpos": "^3.0.0-alpha.6",
     "express": "^4.17.1",
     "mysql8": "^2.17.3"
   },

@@ -18,13 +18,22 @@ import Header from "./components/Header";
 import FormsApi from "../../api/forms";
 import UsersApi from "../../api/users";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import qz from "qz-tray";
 
 //print
-import ReactToPrint from "react-to-print";
-import Print from "../../components/print";
+
+/* <script type="text/javascript" src="js/dependencies/rsvp-3.1.0.min.js"></script>
+<script type="text/javascript" src="js/dependencies/sha-256.min.js"></script>
+<script type="text/javascript" src="js/qz-tray.js"></script> */
+
+//print
+
+//print
 
 import "../../design/main.css";
 import "../../design/forms.css";
+import "../../design/print_sale.css";
+import "../../assets/fhp.jpg";
 import user from "../../app_config";
 
 function Alert(props) {
@@ -38,7 +47,7 @@ class NewSale extends Component {
       open: false,
       message: "Please Wait...",
       messageState: "",
-      print: false,
+      print: true,
       _content: {},
       form_visible: false,
       active_product_qty: 0,
@@ -54,10 +63,96 @@ class NewSale extends Component {
     };
   }
 
+  print_str = (data) => {
+    console.log(data);
+    let print_str = `<div >
+            <div className="print-pharmacy">
+              <div>FREEDOM HEALTH AND SUPPLIES LTD</div>
+              <div>Plot 7, Chegere Road Apac.</div>
+              <div>Plot P.O.Box 120 Apac</div>
+              <div>Tel: 0772 344266</div>
+            </div>
+            <div>Sales Receipt</div>
+            <div className="date">
+              Date:
+              ${this.getDate()}
+            </div>
+            <table>
+              <tr>
+                <th style="width:100px;text-align: left;">Name</th>
+                <th style="width:40px">Qty</th>
+                <th style="width:40px">Price(Shs)</th>
+              </tr>`;
+    if (data.length === 0) {
+      print_str = "No Data to Print";
+    } else {
+      data.forEach((v) => {
+        print_str += `
+        <tr>
+          <td style="width:100px; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;text-align: left;">
+            ${v.product_name}
+          </td>
+          <td style="width:40px">${v.qty}</td>
+          <td style="width:40px">
+            ${parseInt(v.product_price) * parseInt(v.qty)}
+          </td>
+        </tr>`;
+      });
+    }
+    return (print_str += `
+          </div>
+            <div>Served By: ${user.user.username}</div>
+          </div>
+        `);
+  };
   print_receipt = () => {
-    return;
+    let data_str = this.print_str(this.state.formData);
+    qz.websocket
+      .connect()
+      .then(() => {
+        return qz.printers.find("POS");
+      })
+      .then((printer) => {
+        console.log(printer);
+        let config = qz.configs.create(printer);
+        return qz.print(config, [
+          {
+            type: "pixel",
+            format: "html",
+            flavor: "plain",
+            data: data_str,
+          },
+        ]);
+      })
+      .then(() => {
+        return qz.websocket.disconnect();
+      })
+      .then(() => {
+        // process.exit(0);
+      })
+      .catch((err) => {
+        console.error(err);
+        // process.exit(1);
+      });
   };
 
+  //router after sale
+  nextPath = (path) => {
+    this.props.history.push(path);
+  };
+  //router after sale
+
+  //date for receipt
+  getDate() {
+    let date =
+      new Date(Date.now()).getDate() +
+      " / " +
+      (new Date(Date.now()).getMonth() + 1) +
+      " / " +
+      new Date(Date.now()).getFullYear();
+    return date;
+  }
+  //date for receipt
   handleSale = async (e) => {
     e.preventDefault();
     this.setState({ ...this.state, open: true, messageState: "info" });
@@ -83,6 +178,7 @@ class NewSale extends Component {
     let api = new FormsApi();
     let res = await api.post("/user/sale/new_sale", this.state._content);
     if (res.status === true) {
+      this.print_receipt();
       this.setState({
         ...this.state,
         open: true,
@@ -90,7 +186,7 @@ class NewSale extends Component {
         messageState: "success",
       });
       setTimeout(() => {
-        window.location.reload();
+        this.nextPath("/new-sale");
       }, 200);
     } else {
       this.setState({
@@ -632,6 +728,7 @@ class NewSale extends Component {
                         <FormControlLabel
                           control={
                             <Checkbox
+                              defaultChecked
                               name="print_receipt"
                               onChange={() => {
                                 this.setState({
@@ -644,32 +741,18 @@ class NewSale extends Component {
                           label="Print Receipt"
                         />
                       </FormGroup>
-                      {this.state.print ? (
-                        <ReactToPrint
-                          trigger={() => {
-                            return (
-                              <Button
-                                variant="contained"
-                                type="submit"
-                                color="primary"
-                                style={{ marginRight: 10 }}
-                              >
-                                Finish Sale
-                              </Button>
-                            );
-                          }}
-                          content={() => this.componentRef}
-                        />
-                      ) : (
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          style={{ marginRight: 10 }}
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ marginRight: 10 }}
+                      >
+                        <span
+                          style={{ fontSize: "17.5px", marginRight: "10px" }}
                         >
-                          Finish Sale
-                        </Button>
-                      )}
+                          <i className="las la-print"></i>
+                        </span>
+                        Finish Sale
+                      </Button>
                     </div>
                   </div>
                   <Finish t={this.getTotals()} />
@@ -677,16 +760,6 @@ class NewSale extends Component {
               </div>
             </div>
           </main>
-        </div>
-        <div style={{ display: "none" }}>
-          {this.state.print ? (
-            <Print
-              ref={(el) => (this.componentRef = el)}
-              data={this.state.formData}
-            />
-          ) : (
-            <></>
-          )}
         </div>
       </>
     );

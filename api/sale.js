@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const conn = require("../database/db");
 
+//printer
+
+//printer
+
 router.post("/new_product", async (req, res) => {
   let { generic_name, description, units, date } = req.body;
   let units_arr = [];
