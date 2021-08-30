@@ -86,7 +86,6 @@ router.post("/new_supplier", async (req, res) => {
             supplier_lastname: supplier_lastname,
             supplier_contact: supplier_contact,
             supplier_location: supplier_location,
-            supplier_address: supplier_address,
             date_registered: date,
           },
           (err, result) => {
@@ -370,7 +369,7 @@ router.post("/new_sale", async (req, res) => {
 });
 
 router.post("/new_purchase", async (req, res) => {
-  let { total_amount, discount, pay_amount, products_purchased, date } =
+  let { total_amount, discount, pay_amount, products_purchased, date, user } =
     req.body;
   products_purchased.forEach((e) => {
     let id = parseInt(e.product_id);
@@ -472,6 +471,7 @@ router.post("/new_purchase", async (req, res) => {
       purchase_discount: parseFloat(discount) || 0,
       purchase_amount: parseFloat(pay_amount),
       purchase_t_amount: parseFloat(total_amount),
+      purchase_made_by: user,
       purchase_date: date,
     },
     (first_err, first_res) => {

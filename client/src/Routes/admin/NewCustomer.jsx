@@ -187,8 +187,10 @@ class NewCustomer extends Component {
                                 id="select_type"
                                 defaultValue=""
                               >
-                                <MenuItem value="1">Retailer</MenuItem>
-                                <MenuItem value="2">Final User</MenuItem>
+                                <MenuItem value="Retailer">Retailer</MenuItem>
+                                <MenuItem value="Wholesaler">
+                                  Wholesaler
+                                </MenuItem>
                               </Select>
                             </FormControl>
                           </div>
