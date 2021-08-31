@@ -137,6 +137,25 @@ class AllProducts extends Component {
                         }
                       }}
                     />
+                    <TextField
+                      name="drug_name"
+                      variant="outlined"
+                      label="Product Name"
+                      style={{ width: "15%" }}
+                      onKeyUp={async (e) => {
+                        const res = e.target.value
+                          ? (await UsersApi.data(
+                              `/user/sale/products/${e.target.value}`
+                            )) || []
+                          : [];
+                        if (res) {
+                          this.setState({
+                            ...this.state,
+                            products: res === "Error" ? [] : res,
+                          });
+                        }
+                      }}
+                    />
                   </div>
                   <div className="card-body">
                     <table width="100%">
