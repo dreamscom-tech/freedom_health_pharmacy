@@ -186,7 +186,7 @@ class Finance extends Component {
                 <div className="">
                   <h4>UGX {Helper.format(this.state.expenses)}</h4>
                   <span>
-                    Total Purchase <br />
+                    Purchases <br />
                     <span style={{ fontSize: "13px" }}>This Month</span>
                   </span>
                 </div>
@@ -198,7 +198,7 @@ class Finance extends Component {
                 <div className="">
                   <h4>UGX {Helper.format(this.state.income)}</h4>
                   <span>
-                    Total Income <br />
+                    Sales <br />
                     <span style={{ fontSize: "13px" }}>This Month</span>
                   </span>
                 </div>
