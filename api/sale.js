@@ -156,7 +156,7 @@ router.post("/new_sale", async (req, res) => {
                   let qty_diff = 0;
                   for (let j = 0; j < batch_res.length; j++) {
                     qty += batch_res[j].batch_qty;
-                    if (qty <= parseInt(e.qty)) {
+                    if (qty < parseInt(e.qty)) {
                       let _qty = batch_res[j].batch_qty - parseInt(e.qty);
                       qty_diff += _qty;
                       conn.query(
@@ -236,6 +236,40 @@ router.post("/new_sale", async (req, res) => {
                           }
                         }
                       );
+                    } else if (qty === parseInt(e.qty)) {
+                      conn.query(
+                        `DELETE FROM batch_tbl WHERE batch_id = ?`,
+                        batch_res[j].batch_id,
+                        (_errb, _resb) => {
+                          if (_errb) {
+                            console.log(_errb);
+                            res.send({
+                              data: "An Error Occured.Try Again",
+                              status: false,
+                            });
+                          } else {
+                            conn.query(
+                              `UPDATE products_tbl SET ? WHERE product_id = ?`,
+                              [
+                                {
+                                  product_qty:
+                                    res_first[0].product_qty - parseInt(e.qty),
+                                },
+                                id,
+                              ],
+                              (err_product, res_product) => {
+                                if (err_product) {
+                                  console.log(err_product);
+                                  res.send({
+                                    data: "An Error Occured",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            );
+                          }
+                        }
+                      );
                     }
                   }
                 }
@@ -281,7 +315,9 @@ router.post("/new_sale", async (req, res) => {
                               [
                                 {
                                   product_qty:
-                                    res_first[0].product_qty + new_qty,
+                                    new_qty < 0
+                                      ? res_first[0].product_qty + new_qty
+                                      : res_first[0].product_qty - new_qty,
                                 },
                                 id,
                               ],
@@ -501,7 +537,6 @@ router.post("/edit_product/:id", async (req, res) => {
           `UPDATE products_tbl SET ? WHERE product_id =?`,
           [
             {
-              product_generic_name: req.body.trade_name,
               product_generic_name: req.body.generic_name,
               product_description_name: req.body.description,
               product_units:
