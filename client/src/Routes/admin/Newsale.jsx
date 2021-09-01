@@ -20,6 +20,9 @@ import UsersApi from "../../api/users";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import qz from "qz-tray";
 
+//print image:
+import PrintImage from "../../assets/logo_hospital.png";
+
 //print
 
 /* <script type="text/javascript" src="js/dependencies/rsvp-3.1.0.min.js"></script>
@@ -33,8 +36,8 @@ import qz from "qz-tray";
 import "../../design/main.css";
 import "../../design/forms.css";
 import "../../design/print_sale.css";
-import "../../assets/fhp.jpg";
 import user from "../../app_config";
+import data from "../../components/raw_print";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -64,65 +67,62 @@ class NewSale extends Component {
   }
 
   print_str = (data) => {
-    console.log(data);
-    let print_str = `<div >
-            <div className="print-pharmacy">
-              <div>FREEDOM HEALTH AND SUPPLIES LTD</div>
-              <div>Plot 7, Chegere Road Apac.</div>
-              <div>Plot P.O.Box 120 Apac</div>
-              <div>Tel: 0772 344266</div>
+    let print_str = "";
+    print_str += `
+        <div>
+            <div>
+              <div style="font-size:13px;">FREEDOM HEALTH AND SUPPLIES LTD</div>
+              <div style="font-size:10px;">Plot 7, Chegere Road Apac.</div>
+              <div style="font-size:10px;">Plot P.O.Box 120 Apac</div>
+              <div style="font-size:10px;">Tel: 0772 344266</div>
             </div>
-            <div>Sales Receipt</div>
-            <div className="date">
+            <div style="font-size:12px;">Sales Receipt</div>
+            <div style="font-size:12px;">
               Date:
               ${this.getDate()}
             </div>
             <table>
               <tr>
-                <th style="width:100px;text-align: left;">Name</th>
-                <th style="width:40px">Qty</th>
-                <th style="width:40px">Price(Shs)</th>
-              </tr>`;
-    if (data.length === 0) {
-      print_str = "No Data to Print";
-    } else {
-      data.forEach((v) => {
-        print_str += `
-        <tr>
-          <td style="width:100px; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;text-align: left;">
-            ${v.product_name}
-          </td>
-          <td style="width:40px">${v.qty}</td>
-          <td style="width:40px">
-            ${parseInt(v.product_price) * parseInt(v.qty)}
-          </td>
-        </tr>`;
-      });
-    }
-    return (print_str += `
-          </div>
-            <div>Served By: ${user.user.username}</div>
-          </div>
-        `);
+                <th style="width:30px; font-size:10px; text-align: left;">Name</th>
+                <th style="font-size:10px;">Qty</th>
+                <th style="font-size:10px;">Unit</th>
+                <th style="font-size:10px;">Price(Shs)</th>
+              </tr>
+              `;
+    data.forEach((v) => {
+      print_str += `
+              <tr>
+                <td style="width:30px; font-size:10px; white-space: pre-wrap; text-align: left;">
+                  ${v.product_name}
+                </td>
+                <td style="font-size:10px;">${v.qty}</td>
+                <td style="font-size:10px;">${v.selling_unit}</td>
+                <td style="font-size:10px;">
+                  ${parseInt(v.product_price) * parseInt(v.qty)}
+                </td>
+              </tr>
+              `;
+    });
+    print_str += `</table>
+    
+              &nbsp;&nbsp;&nbsp;
+              <span style="font-size:10px; margin-left:5px">Total</span>
+              &nbsp;&nbsp;&nbsp;
+              <span style="font-size:10px;">${this.getTotals()}</span></div>`;
+    return print_str;
   };
-  print_receipt = () => {
+
+  print_receipt = (v) => {
     let data_str = this.print_str(this.state.formData);
     qz.websocket
       .connect()
       .then(() => {
-        return qz.printers.find("POS");
+        return qz.printers.find("Generic");
       })
       .then((printer) => {
         console.log(printer);
         let config = qz.configs.create(printer);
-        return qz.print(config, [
-          {
-            type: "pixel",
-            format: "html",
-            flavor: "plain",
-            data: data_str,
-          },
-        ]);
+        return qz.print(config, data.new_sale(v));
       })
       .then(() => {
         return qz.websocket.disconnect();
@@ -173,12 +173,22 @@ class NewSale extends Component {
           user: user.user.username,
         },
       });
+    } else {
+      this.setState({
+        ...this.state,
+        open: true,
+        message: "No Products To Sell",
+        messageState: "warning",
+      });
+      return;
     }
 
     let api = new FormsApi();
     let res = await api.post("/user/sale/new_sale", this.state._content);
     if (res.status === true) {
-      this.print_receipt();
+      if (this.state.print) {
+        this.print_receipt(this.state._content);
+      }
       this.setState({
         ...this.state,
         open: true,
@@ -451,7 +461,7 @@ class NewSale extends Component {
                     <div>
                       <FormControl
                         variant="outlined"
-                        label="selling_unit"
+                        // label="selling_unit"
                         style={{
                           width: "85%",
                           marginInline: "20px",
@@ -731,10 +741,15 @@ class NewSale extends Component {
                               defaultChecked
                               name="print_receipt"
                               onChange={() => {
-                                this.setState({
-                                  ...this.state,
-                                  print: !this.state.print,
-                                });
+                                this.setState(
+                                  {
+                                    ...this.state,
+                                    print: !this.state.print,
+                                  },
+                                  () => {
+                                    console.log(this.state.print);
+                                  }
+                                );
                               }}
                             />
                           }
@@ -744,6 +759,7 @@ class NewSale extends Component {
                       <Button
                         variant="contained"
                         color="primary"
+                        type="submit"
                         style={{ marginRight: 10 }}
                       >
                         <span

@@ -342,6 +342,9 @@ td {
   }
 } */
 @media only screen and (max-width: 768px) {
+  .text_field_all_products {
+    width: 40% !important;
+  }
   .close-on-sm {
     color: #fff;
     font-size: 30px;

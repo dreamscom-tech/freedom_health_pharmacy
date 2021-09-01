@@ -10,6 +10,7 @@ import {
   DialogTitle,
   Snackbar,
   IconButton,
+  CircularProgress,
   Menu,
   MenuItem,
 } from "@material-ui/core";
@@ -29,6 +30,7 @@ class AllProducts extends Component {
       AnchorEl: null,
       AnchorElDrugs: null,
       products: [],
+      loading: true,
       open: false,
       open_del: false,
       message: "Please Wait...",
@@ -53,7 +55,11 @@ class AllProducts extends Component {
   async products() {
     const res = (await UsersApi.data("/user/all/products")) || [];
     if (res) {
-      this.setState({ ...this.state, products: res === "Error" ? [] : res });
+      this.setState({
+        ...this.state,
+        loading: false,
+        products: res === "Error" ? [] : res,
+      });
     }
   }
 
@@ -134,6 +140,7 @@ class AllProducts extends Component {
                 <div className="card">
                   <div className="card-header">
                     <TextField
+                      className="text_field_all_products"
                       name="drug_name"
                       variant="outlined"
                       label="Search Batch"
@@ -149,6 +156,7 @@ class AllProducts extends Component {
                         if (res !== "Error") {
                           this.setState({
                             ...this.state,
+                            loader: false,
                             products: res === "Error" ? [] : res,
                           });
                         }
@@ -187,83 +195,49 @@ class AllProducts extends Component {
                       </thead>
                       <tbody>
                         {this.state.products.length === 0 ? (
-                          <tr>
-                            <td>No Product Exists</td>
-                          </tr>
+                          this.state.loading ? (
+                            <tr>
+                              <td>
+                                <CircularProgress size={25} />
+                              </td>
+                            </tr>
+                          ) : (
+                            <tr>
+                              <td>No Product Exists</td>
+                            </tr>
+                          )
                         ) : (
                           this.state.products.map((v, i) => {
                             return (
-                              <>
-                                <tr key={i}>
-                                  <td>{v.product_generic_name}</td>
-                                  <td>{v.product_description_name}</td>
-                                  <td>{v.product_qty}</td>
-                                  <td>
-                                    <Link
-                                      to={`/edit-product?product-id=${v.product_id}`}
-                                    >
-                                      <Button
-                                        variant="contained"
-                                        color="primary"
-                                      >
-                                        Edit
-                                      </Button>
-                                    </Link>
-                                  </td>
-                                  <td>
-                                    {/* <Button
-                                      variant="contained"
-                                      style={{ color: "red" }}
-                                      onClick={() => {
-                                        this.setState({
-                                          ...this.state,
-                                          open: true,
-                                          product_id: v.product_id,
-                                        });
-                                      }}
-                                    >
-                                      Delete
-                                    </Button> */}
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      aria-controls="drug-actions"
-                                      aria-haspopup="true"
-                                      onClick={this.handleOpenActionsDrugs}
-                                    >
-                                      Delete
-                                      <span
-                                        style={{
-                                          fontSize: "17.5px",
-                                          marginLeft: "10px",
-                                        }}
-                                      >
-                                        <span className="las la-angle-down"></span>
-                                      </span>
+                              <tr key={i}>
+                                <td>{v.product_generic_name}</td>
+                                <td>{v.product_description_name}</td>
+                                <td>{v.product_qty}</td>
+                                <td>
+                                  <Link
+                                    to={`/edit-product?product-id=${v.product_id}`}
+                                  >
+                                    <Button variant="contained" color="primary">
+                                      Edit
                                     </Button>
-                                    <Menu
-                                      id="drug-actions"
-                                      anchorEl={this.state.AnchorElDrugs}
-                                      keepMounted
-                                      open={Boolean(this.state.AnchorElDrugs)}
-                                      onClose={this.handleCloseActionsDrugs}
-                                      disableScrollLock={true}
-                                    >
-                                      <MenuItem
-                                        onClick={this.handleCloseActionsDrugs}
-                                      >
-                                        New Product
-                                      </MenuItem>
-
-                                      <MenuItem
-                                        onClick={this.handleCloseActionsDrugs}
-                                      >
-                                        See All
-                                      </MenuItem>
-                                    </Menu>
-                                  </td>
-                                </tr>
-                              </>
+                                  </Link>
+                                </td>
+                                <td>
+                                  <Button
+                                    variant="contained"
+                                    style={{ color: "red" }}
+                                    onClick={() => {
+                                      this.setState({
+                                        ...this.state,
+                                        open: true,
+                                        product_id: v.product_id,
+                                      });
+                                    }}
+                                  >
+                                    Delete
+                                  </Button>
+                                </td>
+                              </tr>
                             );
                           })
                         )}
