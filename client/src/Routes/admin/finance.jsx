@@ -98,7 +98,7 @@ class Finance extends Component {
           }
           if (
             new Date(parseInt(e.purchase_date)).getMonth() ===
-            new Date(Date.now()).getMonth
+            new Date(Date.now()).getMonth()
           ) {
             total += e.purchase_amount;
           }
@@ -253,7 +253,7 @@ class Finance extends Component {
                       <thead>
                         <tr>
                           <td>Total</td>
-                          <td>Discont</td>
+                          <td>Discount</td>
                           <td>Paid</td>
                           <td></td>
                         </tr>
@@ -339,7 +339,7 @@ class Finance extends Component {
                       <thead>
                         <tr>
                           <td>Total</td>
-                          <td>Discont</td>
+                          <td>Discount</td>
                           <td>Paid</td>
                           <td></td>
                         </tr>

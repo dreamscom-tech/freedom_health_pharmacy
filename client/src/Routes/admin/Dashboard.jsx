@@ -46,36 +46,39 @@ class Dashboard extends Component {
   async products() {
     const res = (await UsersApi.data("/user/all/products")) || [];
     if (res) {
-      this.setState({ ...this.state, products: res });
+      this.setState({ ...this.state, products: res === "Error" ? [] : res });
     }
   }
 
   async sales() {
     const res = (await UsersApi.data("/user/all/sales")) || [];
-    if (res !== "Error") {
-      let sales_daily = 0;
-      let sales_monthly = 0;
-      res.forEach((e) => {
-        if (
-          new Date(parseInt(e.sales_date)).getDate() ===
-          new Date(Date.now()).getDate()
-        ) {
-          sales_daily++;
-        }
-        if (
-          new Date(parseInt(e.sales_date)).getMonth() ===
-          new Date(Date.now()).getMonth()
-        ) {
-          sales_monthly++;
-        }
-      });
-
-      this.setState({
-        ...this.state,
-        sales_number_daily: sales_daily,
-        sales_number_monthly: sales_monthly,
-      });
-    }
+    let sales_daily = 0;
+    let sales_monthly = 0;
+    res === "Error"
+      ? this.setState({
+          ...this.state,
+          sales_number_monthly: 0,
+          sales_number_daily: 0,
+        })
+      : res.forEach((e) => {
+          if (
+            new Date(parseInt(e.sales_date)).getDate() ===
+            new Date(Date.now()).getDate()
+          ) {
+            sales_daily++;
+          }
+          if (
+            new Date(parseInt(e.sales_date)).getMonth() ===
+            new Date(Date.now()).getMonth()
+          ) {
+            sales_monthly++;
+          }
+        });
+    this.setState({
+      ...this.state,
+      sales_number_monthly: sales_monthly,
+      sales_number_daily: sales_daily,
+    });
   }
 
   handleOpenActions = (e) => {

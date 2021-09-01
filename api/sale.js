@@ -503,7 +503,6 @@ router.post("/edit_product/:id", async (req, res) => {
           `UPDATE products_tbl SET ? WHERE product_id =?`,
           [
             {
-              product_generic_name: req.body.trade_name,
               product_generic_name: req.body.generic_name,
               product_description_name: req.body.description,
               product_units:
