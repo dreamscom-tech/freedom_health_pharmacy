@@ -143,15 +143,17 @@ class AllProducts extends Component {
                       className="text_field_all_products"
                       name="drug_name"
                       variant="outlined"
-                      label="Product Name"
-                      style={{ width: "15%" }}
+                      label="Search Batch"
+                      style={{
+                        width: "15%",
+                      }}
                       onKeyUp={async (e) => {
                         const res = e.target.value
                           ? (await UsersApi.data(
-                              `/user/sale/products/${e.target.value}`
+                              `/user/all/search_batch/${e.target.value}`
                             )) || []
-                          : [];
-                        if (res) {
+                          : (await UsersApi.data("/user/all/products")) || [];
+                        if (res !== "Error") {
                           this.setState({
                             ...this.state,
                             loader: false,

@@ -163,7 +163,7 @@ router.get("/search_batch/:id", async (req, res) => {
     return;
   } else {
     conn.query(
-      `SELECT products_tbl.product_id,product_qty,product_generic_name,product_description_name
+      `SELECT products_tbl.product_id,product_qty,product_generic_name,product_description_name,batch_no
        FROM products_tbl JOIN 
       batch_tbl ON batch_tbl.product_id=products_tbl.product_id 
       WHERE batch_no LIKE '%${req.params.id}%'`,

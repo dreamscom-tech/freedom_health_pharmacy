@@ -183,7 +183,12 @@ class Dashboard extends Component {
                       </Link>
                       <Link to="/all-products">
                         <MenuItem onClick={this.handleCloseActionsDrugs}>
-                          See All
+                          See All Products
+                        </MenuItem>
+                      </Link>
+                      <Link to="/all-products">
+                        <MenuItem onClick={this.handleCloseActionsDrugs}>
+                          See All Batches
                         </MenuItem>
                       </Link>
                     </Menu>
