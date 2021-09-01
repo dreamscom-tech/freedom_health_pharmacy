@@ -281,7 +281,9 @@ router.post("/new_sale", async (req, res) => {
                               [
                                 {
                                   product_qty:
-                                    res_first[0].product_qty + new_qty,
+                                    new_qty < 0
+                                      ? res_first[0].product_qty + new_qty
+                                      : res_first[0].product_qty - new_qty,
                                 },
                                 id,
                               ],
