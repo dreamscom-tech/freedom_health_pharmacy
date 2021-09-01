@@ -174,7 +174,10 @@ router.post("/new_sale", async (req, res) => {
                               `UPDATE products_tbl SET ? WHERE product_id = ?`,
                               [
                                 {
-                                  product_qty: res_first[0].product_qty + qty,
+                                  product_qty:
+                                    qty > 0
+                                      ? res_first[0].product_qty - qty
+                                      : res_first[0].product_qty + qty,
                                 },
                                 id,
                               ],

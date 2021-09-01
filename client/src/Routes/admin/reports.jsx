@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Button } from "@material-ui/core";
+// import { Button } from "@material-ui/core";
 import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
+import Helper from "../../components/format";
 
 class Reports extends Component {
   constructor(props) {
@@ -300,7 +301,7 @@ class Reports extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>Today</h3>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       aria-haspopup="true"
@@ -309,7 +310,7 @@ class Reports extends Component {
                       <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
                         <span className="las la-print"></span>
                       </span>
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className="card-body">
                     <div className="">
@@ -343,13 +344,17 @@ class Reports extends Component {
                             <span style={{ fontWeight: "bolder" }}>
                               Total Expenses:
                             </span>
-                            {`  UGX ${this.state.daily.daily_expenses}`}
+                            {`   UGX ${Helper.format(
+                              this.state.daily.daily_expenses
+                            )}`}
                           </td>
                           <td>
                             <span style={{ fontWeight: "bolder" }}>
                               Total Income:
                             </span>
-                            {` UGX ${this.state.daily.daily_income}`}
+                            {`   UGX ${Helper.format(
+                              this.state.daily.daily_income
+                            )}`}
                           </td>
                         </tr>
                         <tr>
@@ -369,7 +374,7 @@ class Reports extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>This Month</h3>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       aria-controls="reception-actions"
@@ -379,7 +384,7 @@ class Reports extends Component {
                       <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
                         <span className="las la-print"></span>
                       </span>
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className="card-body">
                     <div className="">
@@ -413,13 +418,17 @@ class Reports extends Component {
                             <span style={{ fontWeight: "bolder" }}>
                               Total Expenses:
                             </span>
-                            {`  UGX ${this.state.monthly.monthly_expenses}`}
+                            {`  UGX ${Helper.format(
+                              this.state.monthly.monthly_expenses
+                            )}`}
                           </td>
                           <td>
                             <span style={{ fontWeight: "bolder" }}>
                               Total Income:
                             </span>
-                            {`UGX ${this.state.monthly.monthly_income}`}
+                            {`  UGX ${Helper.format(
+                              this.state.monthly.monthly_income
+                            )}`}
                           </td>
                         </tr>
                         <tr>
@@ -441,7 +450,7 @@ class Reports extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>This Year</h3>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       aria-haspopup="true"
@@ -450,7 +459,7 @@ class Reports extends Component {
                       <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
                         <span className="las la-print"></span>
                       </span>
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className="card-body">
                     <div className="">
@@ -484,13 +493,17 @@ class Reports extends Component {
                             <span style={{ fontWeight: "bolder" }}>
                               Total Expenses:
                             </span>
-                            {`  UGX ${this.state.annually.annual_expenses}`}
+                            {`  UGX ${Helper.format(
+                              this.state.annually.annual_expenses
+                            )}`}
                           </td>
                           <td>
                             <span style={{ fontWeight: "bolder" }}>
                               Total Income:
                             </span>
-                            {` UGX ${this.state.annually.annual_income}`}
+                            {` UGX ${Helper.format(
+                              this.state.annually.annual_income
+                            )}`}
                           </td>
                         </tr>
                         <tr>

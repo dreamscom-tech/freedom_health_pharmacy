@@ -1,4 +1,5 @@
 export default class UI_Helper {
-  ///new Login
-  sta;
+  static format(value) {
+    return value.toLocaleString();
+  }
 }

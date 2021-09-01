@@ -14,6 +14,7 @@ import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
 import user from "../../app_config";
+import Helper from "../../components/format";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -102,7 +103,7 @@ class Dashboard extends Component {
             <div className="cards">
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.my_sales.length}</h1>
+                  <h3>{Helper.format(this.state.my_sales.length)}</h3>
                   <span>My Sales</span>
                 </div>
                 <div className="">
@@ -111,7 +112,7 @@ class Dashboard extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.sales_number}</h1>
+                  <h3>{Helper.format(this.state.sales_number)}</h3>
                   <span>Sales</span>
                 </div>
                 <div className="">
@@ -120,7 +121,7 @@ class Dashboard extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.purchase_number}</h1>
+                  <h3>{Helper.format(this.state.purchase_number)}</h3>
                   <span>Purchases</span>
                 </div>
                 <div className="">
@@ -129,7 +130,7 @@ class Dashboard extends Component {
               </div>
               <div className="card-single">
                 <div className="">
-                  <h1>{this.state.products.length}</h1>
+                  <h3>{Helper.format(this.state.products.length)}</h3>
                   <span>Total Products</span>
                 </div>
                 <div className="">

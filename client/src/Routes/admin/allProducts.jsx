@@ -11,6 +11,8 @@ import {
   Snackbar,
   IconButton,
   CircularProgress,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import Nav from "./components/Nav";
@@ -25,6 +27,8 @@ class AllProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      AnchorEl: null,
+      AnchorElDrugs: null,
       products: [],
       loading: true,
       open: false,
@@ -34,6 +38,19 @@ class AllProducts extends Component {
     };
     this.products();
   }
+
+  handleOpenActions = (e) => {
+    this.setState({ ...this.state, AnchorEl: e.currentTarget });
+  };
+  handleOpenActionsDrugs = (e) => {
+    this.setState({ ...this.state, AnchorElDrugs: e.currentTarget });
+  };
+  handleCloseActions = () => {
+    this.setState({ ...this.state, AnchorEl: null });
+  };
+  handleCloseActionsDrugs = () => {
+    this.setState({ ...this.state, AnchorElDrugs: null });
+  };
 
   async products() {
     const res = (await UsersApi.data("/user/all/products")) || [];
@@ -140,6 +157,25 @@ class AllProducts extends Component {
                           this.setState({
                             ...this.state,
                             loader: false,
+                            products: res === "Error" ? [] : res,
+                          });
+                        }
+                      }}
+                    />
+                    <TextField
+                      name="drug_name"
+                      variant="outlined"
+                      label="Product Name"
+                      style={{ width: "15%" }}
+                      onKeyUp={async (e) => {
+                        const res = e.target.value
+                          ? (await UsersApi.data(
+                              `/user/sale/products/${e.target.value}`
+                            )) || []
+                          : [];
+                        if (res) {
+                          this.setState({
+                            ...this.state,
                             products: res === "Error" ? [] : res,
                           });
                         }
