@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, CircularProgress } from "@material-ui/core";
 import UsersApi from "../api/users";
 import Image from "../assets/doctor.png";
-import Logo from "../assets/logo_hospital.png";
+import Logo from "../assets/fhp.jpg";
 import { Base64 } from "js-base64";
 //design
 import "./login.css";
@@ -17,6 +17,7 @@ function Login() {
       username: user.username,
       password: user.password,
     });
+    console.log(res);
     if (res !== "Error") {
       if (res.status === false) {
         setUser({ ...user, _cp: false });

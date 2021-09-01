@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import user from "../app_config";
 import "../design/print_sale.css";
-import "../assets/fhp.jpg";
 
 class Print extends Component {
   constructor(props) {
