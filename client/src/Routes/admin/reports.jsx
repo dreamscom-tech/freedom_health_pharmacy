@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button } from "@material-ui/core";
+// import { Button } from "@material-ui/core";
 import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
@@ -301,7 +301,7 @@ class Reports extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>Today</h3>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       aria-haspopup="true"
@@ -310,7 +310,7 @@ class Reports extends Component {
                       <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
                         <span className="las la-print"></span>
                       </span>
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className="card-body">
                     <div className="">
@@ -374,7 +374,7 @@ class Reports extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>This Month</h3>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       aria-controls="reception-actions"
@@ -384,7 +384,7 @@ class Reports extends Component {
                       <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
                         <span className="las la-print"></span>
                       </span>
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className="card-body">
                     <div className="">
@@ -450,7 +450,7 @@ class Reports extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>This Year</h3>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       aria-haspopup="true"
@@ -459,7 +459,7 @@ class Reports extends Component {
                       <span style={{ fontSize: "17.5px", marginLeft: "10px" }}>
                         <span className="las la-print"></span>
                       </span>
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className="card-body">
                     <div className="">

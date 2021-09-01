@@ -64,7 +64,7 @@ class Dashboard extends Component {
         }
         if (
           new Date(parseInt(e.sales_date)).getMonth() ===
-          new Date(Date.now()).getUTCMonth()
+          new Date(Date.now()).getMonth()
         ) {
           sales_monthly++;
         }

@@ -10,6 +10,8 @@ import {
   DialogTitle,
   Snackbar,
   IconButton,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import Nav from "./components/Nav";
@@ -24,6 +26,8 @@ class AllProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      AnchorEl: null,
+      AnchorElDrugs: null,
       products: [],
       open: false,
       open_del: false,
@@ -32,6 +36,19 @@ class AllProducts extends Component {
     };
     this.products();
   }
+
+  handleOpenActions = (e) => {
+    this.setState({ ...this.state, AnchorEl: e.currentTarget });
+  };
+  handleOpenActionsDrugs = (e) => {
+    this.setState({ ...this.state, AnchorElDrugs: e.currentTarget });
+  };
+  handleCloseActions = () => {
+    this.setState({ ...this.state, AnchorEl: null });
+  };
+  handleCloseActionsDrugs = () => {
+    this.setState({ ...this.state, AnchorElDrugs: null });
+  };
 
   async products() {
     const res = (await UsersApi.data("/user/all/products")) || [];
@@ -194,7 +211,7 @@ class AllProducts extends Component {
                                     </Link>
                                   </td>
                                   <td>
-                                    <Button
+                                    {/* <Button
                                       variant="contained"
                                       style={{ color: "red" }}
                                       onClick={() => {
@@ -206,7 +223,44 @@ class AllProducts extends Component {
                                       }}
                                     >
                                       Delete
+                                    </Button> */}
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      aria-controls="drug-actions"
+                                      aria-haspopup="true"
+                                      onClick={this.handleOpenActionsDrugs}
+                                    >
+                                      Delete
+                                      <span
+                                        style={{
+                                          fontSize: "17.5px",
+                                          marginLeft: "10px",
+                                        }}
+                                      >
+                                        <span className="las la-angle-down"></span>
+                                      </span>
                                     </Button>
+                                    <Menu
+                                      id="drug-actions"
+                                      anchorEl={this.state.AnchorElDrugs}
+                                      keepMounted
+                                      open={Boolean(this.state.AnchorElDrugs)}
+                                      onClose={this.handleCloseActionsDrugs}
+                                      disableScrollLock={true}
+                                    >
+                                      <MenuItem
+                                        onClick={this.handleCloseActionsDrugs}
+                                      >
+                                        New Product
+                                      </MenuItem>
+
+                                      <MenuItem
+                                        onClick={this.handleCloseActionsDrugs}
+                                      >
+                                        See All
+                                      </MenuItem>
+                                    </Menu>
                                   </td>
                                 </tr>
                               </>

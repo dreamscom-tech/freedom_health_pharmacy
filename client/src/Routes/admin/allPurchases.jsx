@@ -161,7 +161,7 @@ class AllPurchases extends Component {
                         {`Amount Paid: ${this.state.dialog_data.purchase_amount}`}
                       </td>
                     </tr>
-                    {`Made By: ${this.state.dialog_purchase_data.purchase_made_by}`}
+                    {`Made By: ${this.state.dialog_data.purchase_made_by}`}
                   </table>
                 </div>
               </DialogContentText>
