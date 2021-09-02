@@ -121,29 +121,27 @@ class AllPurchases extends Component {
                         ) : (
                           this.state.purchases.map((v, i) => {
                             return (
-                              <>
-                                <tr key={i}>
-                                  <td>{i + 1}</td>
-                                  <td>{v.purchase_t_amount}</td>
-                                  <td>{v.purchase_discount}</td>
-                                  <td>{v.purchase_amount}</td>
-                                  <td>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={(e) => {
-                                        this.setState({
-                                          ...this.state,
-                                          open: true,
-                                          dialog_data: v,
-                                        });
-                                      }}
-                                    >
-                                      Details
-                                    </Button>
-                                  </td>
-                                </tr>
-                              </>
+                              <tr key={i}>
+                                <td>{i + 1}</td>
+                                <td>{v.purchase_t_amount}</td>
+                                <td>{v.purchase_discount}</td>
+                                <td>{v.purchase_amount}</td>
+                                <td>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={(e) => {
+                                      this.setState({
+                                        ...this.state,
+                                        open: true,
+                                        dialog_data: v,
+                                      });
+                                    }}
+                                  >
+                                    Details
+                                  </Button>
+                                </td>
+                              </tr>
                             );
                           })
                         )}

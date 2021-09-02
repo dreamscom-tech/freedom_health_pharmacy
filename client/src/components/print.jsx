@@ -14,16 +14,6 @@ class Print {
       return date;
     };
 
-    const getTotals = () => {
-      let total = 0;
-      if (this.state.formData.length !== 0) {
-        this.state.formData.forEach((e) => {
-          total += parseInt(e.product_price) * parseInt(e.qty);
-        });
-      }
-      return total;
-    };
-
     let print_str = "";
     print_str += `
         <div>
@@ -60,12 +50,7 @@ class Print {
               </tr>
               `;
     });
-    print_str += `</table>
-    
-              &nbsp;&nbsp;&nbsp;
-              <span style="font-size:10px; margin-left:5px">Total</span>
-              &nbsp;&nbsp;&nbsp;
-              <span style="font-size:10px;">${getTotals()}</span></div>`;
+    print_str += `</table>`;
     return print_str;
   };
 }
