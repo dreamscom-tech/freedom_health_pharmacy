@@ -2,20 +2,13 @@ import React, { Component } from "react";
 import user from "../app_config";
 import "../design/print_sale.css";
 
-class Print extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      formData: this.props.data,
-    };
-  }
-
+class Print {
   getDate() {
     let date =
       new Date(Date.now()).getDate() +
-      " / " +
+      "/" +
       (new Date(Date.now()).getMonth() + 1) +
-      " / " +
+      "/" +
       new Date(Date.now()).getFullYear();
     return date;
   }
@@ -30,52 +23,51 @@ class Print extends Component {
     return total;
   }
 
-  render() {
-    return (
-      <>
-        <div className="print-ctr" style={{ margin: "0", padding: "0" }}>
-          <div className="print">
-            <div className="print-pharmacy">
-              <span>FREEDOM HEALTH AND SUPPLIES LTD</span>
-              <span>Plot 7, Chegere Road Apac.</span>
-              <span>Plot P.O.Box 120 Apac</span>
-              <span>Tel: 0772 344266</span>
+  print_str = (data) => {
+    let print_str = "";
+    print_str += `
+        <div>
+            <div>
+              <div style="font-size:13px;">FREEDOM HEALTH AND SUPPLIES LTD</div>
+              <div style="font-size:10px;">Plot 7, Chegere Road Apac.</div>
+              <div style="font-size:10px;">Plot P.O.Box 120 Apac</div>
+              <div style="font-size:10px;">Tel: 0772 344266</div>
             </div>
-            <div className="print-title">Sales Receipt</div>
-            <div className="date">
+            <div style="font-size:12px;">Sales Receipt</div>
+            <div style="font-size:12px;">
               Date:
-              {this.getDate()}
+              ${this.getDate()}
             </div>
-            <div className="content">
-              <div className="grid grid-hdr">
-                <div className="grid-row">Name</div>
-                <div className="grid-row">Qty</div>
-                <div className="grid-row">Price(Shs)</div>
-              </div>
-              {this.state.formData.length === 0 ? (
-                <div className="grid">
-                  <div className="grid-row">No Content To Print</div>
-                </div>
-              ) : (
-                this.state.formData.map((v, i) => {
-                  return (
-                    <div className="grid" key={i}>
-                      <div className="grid-row">{v.product_name}</div>
-                      <div className="grid-row">{v.qty}</div>
-                      <div className="grid-row">
-                        {parseInt(v.product_price) * parseInt(v.qty)}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-            <div className="attendant">Served By: {user.user.username}</div>
-          </div>
-        </div>
-      </>
-    );
-  }
+            <table>
+              <tr>
+                <th style="width:30px; font-size:10px; text-align: left;">Name</th>
+                <th style="font-size:10px;">Qty</th>
+                <th style="font-size:10px;">Unit</th>
+                <th style="font-size:10px;">Price(Shs)</th>
+              </tr>
+              `;
+    data.forEach((v) => {
+      print_str += `
+              <tr>
+                <td style="width:30px; font-size:10px; white-space: pre-wrap; text-align: left;">
+                  ${v.product_name}
+                </td>
+                <td style="font-size:10px;">${v.qty}</td>
+                <td style="font-size:10px;">${v.selling_unit}</td>
+                <td style="font-size:10px;">
+                  ${parseInt(v.product_price) * parseInt(v.qty)}
+                </td>
+              </tr>
+              `;
+    });
+    print_str += `</table>
+    
+              &nbsp;&nbsp;&nbsp;
+              <span style="font-size:10px; margin-left:5px">Total</span>
+              &nbsp;&nbsp;&nbsp;
+              <span style="font-size:10px;">${this.getTotals()}</span></div>`;
+    return print_str;
+  };
 }
 
 export default Print;

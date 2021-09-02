@@ -62,55 +62,10 @@ class NewSale extends Component {
       formData: [],
       total: 0,
       discount: 0,
+      batch_qty: 0,
       batch_index: 1,
     };
   }
-
-  print_str = (data) => {
-    let print_str = "";
-    print_str += `
-        <div>
-            <div>
-              <div style="font-size:13px;">FREEDOM HEALTH AND SUPPLIES LTD</div>
-              <div style="font-size:10px;">Plot 7, Chegere Road Apac.</div>
-              <div style="font-size:10px;">Plot P.O.Box 120 Apac</div>
-              <div style="font-size:10px;">Tel: 0772 344266</div>
-            </div>
-            <div style="font-size:12px;">Sales Receipt</div>
-            <div style="font-size:12px;">
-              Date:
-              ${this.getDate()}
-            </div>
-            <table>
-              <tr>
-                <th style="width:30px; font-size:10px; text-align: left;">Name</th>
-                <th style="font-size:10px;">Qty</th>
-                <th style="font-size:10px;">Unit</th>
-                <th style="font-size:10px;">Price(Shs)</th>
-              </tr>
-              `;
-    data.forEach((v) => {
-      print_str += `
-              <tr>
-                <td style="width:30px; font-size:10px; white-space: pre-wrap; text-align: left;">
-                  ${v.product_name}
-                </td>
-                <td style="font-size:10px;">${v.qty}</td>
-                <td style="font-size:10px;">${v.selling_unit}</td>
-                <td style="font-size:10px;">
-                  ${parseInt(v.product_price) * parseInt(v.qty)}
-                </td>
-              </tr>
-              `;
-    });
-    print_str += `</table>
-    
-              &nbsp;&nbsp;&nbsp;
-              <span style="font-size:10px; margin-left:5px">Total</span>
-              &nbsp;&nbsp;&nbsp;
-              <span style="font-size:10px;">${this.getTotals()}</span></div>`;
-    return print_str;
-  };
 
   print_receipt = (v) => {
     let data_str = this.print_str(this.state.formData);
@@ -636,57 +591,18 @@ class NewSale extends Component {
                                   ? "Quantity Exceeds Available"
                                   : ""
                               }
-                              defaultValue={1}
+                              defaultValue={0}
                               onChange={async (e) => {
                                 if (
                                   parseInt(e.target.value) >
                                   this.state.active_product_qty
                                 ) {
-                                  this.setState({
+                                  await this.setState({
                                     ...this.state,
                                     over_qty_error: true,
                                   });
                                 } else {
-                                  const res = await UsersApi.data(
-                                    `/user/sale/batch/${
-                                      this.state.active_drug.product_id
-                                    }/${1}`
-                                  );
-                                  if (res !== "Error" && res.length !== 0) {
-                                    await this.setState(
-                                      {
-                                        ...this.state,
-                                        batch_qty: parseInt(res[0].sum),
-                                      },
-                                      async () => {
-                                        if (
-                                          parseInt(e.target.value) >=
-                                          this.state.batch_qty
-                                        ) {
-                                          const res = await UsersApi.data(
-                                            `/user/sale/batch/${
-                                              this.state.active_drug.product_id
-                                            }/${this.state.batch_index + 1}`
-                                          );
-                                          if (
-                                            res !== "Error" &&
-                                            res.length !== 0
-                                          ) {
-                                            this.setState({
-                                              ...this.state,
-                                              batch_index:
-                                                this.state.batch_index + 1,
-                                              batch_qty: parseInt(
-                                                res[res.length - 1].sum
-                                              ),
-                                            });
-                                          }
-                                        }
-                                      }
-                                    );
-                                  }
-
-                                  this.setState({
+                                  await this.setState({
                                     ...this.state,
                                     over_qty_error: false,
                                   });
@@ -712,13 +628,6 @@ class NewSale extends Component {
                               type="text"
                               name="product_price"
                               defaultValue={this.state.active_selling_price}
-                            />
-                            <input
-                              hidden
-                              type="text"
-                              name="product_batch_index"
-                              value={this.state.batch_index}
-                              readOnly
                             />
                           </div>
                         </div>

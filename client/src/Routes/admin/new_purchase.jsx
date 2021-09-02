@@ -20,10 +20,6 @@ import UsersApi from "../../api/users";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import user from "../../app_config";
 
-//print
-import ReactToPrint from "react-to-print";
-import Print from "../../components/print";
-
 import "../../design/main.css";
 import "../../design/forms.css";
 
@@ -489,7 +485,7 @@ class NewPurchase extends Component {
                               name="qty"
                               variant="outlined"
                               label="Quantity"
-                              defaultValue={1}
+                              defaultValue={0}
                               style={{
                                 width: "85%",
                                 margin: "20px",
@@ -530,28 +526,6 @@ class NewPurchase extends Component {
                   <div className="card-header card-header-payments">
                     <h3 className="class_payment_header">Payment</h3>
                     <div className="">
-                      <ReactToPrint
-                        trigger={() => {
-                          return (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              style={{ marginRight: 10 }}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "17.5px",
-                                  marginRight: "10px",
-                                }}
-                              >
-                                <i className="las la-print"></i>
-                              </span>
-                              Print
-                            </Button>
-                          );
-                        }}
-                        content={() => this.componentRef}
-                      />
                       <Button type="submit" variant="contained" color="primary">
                         Finish Purchase
                         <span style={{ fontSize: "15px", marginLeft: "10px" }}>
@@ -565,12 +539,6 @@ class NewPurchase extends Component {
               </div>
             </div>
           </main>
-        </div>
-        <div style={{ display: "none" }}>
-          <Print
-            ref={(el) => (this.componentRef = el)}
-            data={this.state.formData}
-          />
         </div>
       </>
     );
@@ -616,20 +584,6 @@ function Finish({ t }) {
           margin: "20px",
         }}
       />
-      <FormControl
-        style={{
-          width: "75%",
-          marginLeft: "20px",
-          marginBottom: "50px",
-        }}
-      >
-        <FormGroup>
-          <FormControlLabel
-            control={<Checkbox defaultChecked name="print_receipt" />}
-            label="Print Receipt"
-          />
-        </FormGroup>
-      </FormControl>
     </div>
   );
 }

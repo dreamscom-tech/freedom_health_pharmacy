@@ -55,7 +55,6 @@ class NewSale extends Component {
 
   handleSale = async (e) => {
     e.preventDefault();
-    console.log(this.state.batch_index);
     this.setState({ ...this.state, open: true, messageState: "info" });
     const fd = new FormData(e.target);
     let content = {};
