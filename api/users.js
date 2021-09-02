@@ -155,6 +155,73 @@ router.get("/delete/:id", async (req, res) => {
   );
 });
 
+router.get("/batches", async (req, res) => {
+  conn.query(
+    `SELECT * FROM batch_tbl 
+  JOIN products_tbl ON batch_tbl.product_id = products_tbl.product_id`,
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
+});
+
+router.get("/delete_batch/:id", async (req, res) => {
+  conn.query(
+    `SELECT * FROM batch_tbl WHERE batch_id = ?`,
+    req.params.id,
+    (err_first, res_first) => {
+      if (err_first) {
+        console.log(err_first);
+        res.send({ data: "An Error Occured", status: false });
+      } else {
+        conn.query(
+          `SELECT * FROM products_tbl WHERE product_id = ?`,
+          res_first[0].product_id,
+          (error, result) => {
+            if (error) {
+              console.log(error);
+              res.send({ data: "An Error occured", status: false });
+            } else {
+              conn.query(
+                `UPDATE products_tbl SET ? WHERE product_id = ?`,
+                [
+                  {
+                    product_qty: result[0].product_qty - res_first[0].batch_qty,
+                  },
+                  res_first[0].product_id,
+                ],
+                (err, first_res) => {
+                  if (err) {
+                    console.log(err);
+                    res.send({ data: "An Error occured", status: false });
+                  } else {
+                    conn.query(
+                      `DELETE FROM batch_tbl WHERE batch_id =?`,
+                      req.params.id,
+                      (err1, res1) => {
+                        if (err1) {
+                          console.log(err1);
+                          res.send({ data: "An Error occured", status: false });
+                        } else {
+                          res.send({
+                            data: "Batch Number Successfully Removed",
+                            status: true,
+                          });
+                        }
+                      }
+                    );
+                  }
+                }
+              );
+            }
+          }
+        );
+      }
+    }
+  );
+});
+
 router.get("/search_batch/:id", async (req, res) => {
   let pattern = /\W/g;
   let check = pattern.test(req.params.id);
@@ -163,8 +230,9 @@ router.get("/search_batch/:id", async (req, res) => {
     return;
   } else {
     conn.query(
-      `SELECT products_tbl.product_id,product_qty,product_generic_name,product_description_name,batch_no
-       FROM products_tbl JOIN 
+      `SELECT products_tbl.product_id,product_generic_name,product_description_name,
+      batch_tbl.batch_qty,batch_tbl.batch_no,batch_tbl.batch_id
+       FROM products_tbl JOIN
       batch_tbl ON batch_tbl.product_id=products_tbl.product_id 
       WHERE batch_no LIKE '%${req.params.id}%'`,
       req.params.id,

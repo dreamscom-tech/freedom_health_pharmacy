@@ -11,8 +11,6 @@ import {
   Snackbar,
   IconButton,
   CircularProgress,
-  Menu,
-  MenuItem,
 } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import Nav from "./components/Nav";
@@ -239,7 +237,8 @@ class AllProducts extends Component {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Press OK and Continue. This process is Irreversible
+                This will delete all Batches. Press OK and Continue. This
+                process is Irreversible
               </DialogContentText>
             </DialogContent>
             <DialogActions>

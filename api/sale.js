@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { nanoid } = require("nanoid");
 const conn = require("../database/db");
 
 //printer
@@ -175,6 +176,7 @@ router.post("/new_sale", async (req, res) => {
                         );
                       }
                     }
+<<<<<<< HEAD
                     if (parseInt(e.qty) < sum) {
                       for (let j = 0; j < batch_res.length - 1; j++) {
                         conn.query(
@@ -182,6 +184,68 @@ router.post("/new_sale", async (req, res) => {
                           batch_res[j].batch_id,
                           (err) => {
                             throw err;
+=======
+                  }
+                }
+              }
+            );
+          } else {
+            let unit_qty =
+              parseInt(
+                units.find((i) => i.selling_unit === e.selling_unit).qty
+              ) * parseInt(e.qty);
+            conn.query(
+              `SELECT * FROM batch_tbl WHERE product_id = ${id} LIMIT ${parseInt(
+                e.product_batch_index
+              )}`,
+              (unit_err, unit_res) => {
+                if (unit_err) {
+                  console.log(unit_err);
+                  res.send({
+                    data: "An Error Occured. Try Again",
+                    status: false,
+                  });
+                } else {
+                  let new_qty = 0;
+                  let new_qty_diff = 0;
+                  for (let x = 0; x < unit_res.length; x++) {
+                    new_qty += unit_res[x].batch_qty;
+                    if (new_qty < unit_qty) {
+                      let qty_ = unit_res[x].batch_qty - parseInt(e.qty);
+                      new_qty_diff += qty_;
+                      conn.query(
+                        `DELETE FROM batch_tbl WHERE batch_id=?`,
+                        unit_res[x].batch_id,
+                        (_err, _results) => {
+                          if (_err) {
+                            console.log(_err);
+                            res.send({
+                              data: "An Error Occured. Try Again",
+                              status: false,
+                            });
+                          } else {
+                            conn.query(
+                              `UPDATE products_tbl SET ? WHERE product_id = ?`,
+                              [
+                                {
+                                  product_qty:
+                                    new_qty < 0
+                                      ? res_first[0].product_qty + new_qty
+                                      : res_first[0].product_qty - new_qty,
+                                },
+                                id,
+                              ],
+                              (_err5, _res5) => {
+                                if (_err5) {
+                                  console.log(_err5);
+                                  res.send({
+                                    data: "An Error Occured. Try Again",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            );
+>>>>>>> c7db946e0a9c81d161e3119edb183bbb53fc539e
                           }
                         );
                       }
@@ -196,6 +260,40 @@ router.post("/new_sale", async (req, res) => {
                         (err) => {
                           if (err) {
                             throw err;
+                          }
+                        }
+                      );
+                    } else if (new_qty === unit_qty) {
+                      conn.query(
+                        `DELETE FROM batch_tbl WHERE batch_id = ?`,
+                        unit_res[x].batch_id,
+                        (_errb, _resb) => {
+                          if (_errb) {
+                            console.log(_errb);
+                            res.send({
+                              data: "An Error Occured.Try Again",
+                              status: false,
+                            });
+                          } else {
+                            conn.query(
+                              `UPDATE products_tbl SET ? WHERE product_id = ?`,
+                              [
+                                {
+                                  product_qty:
+                                    res_first[0].product_qty - unit_qty,
+                                },
+                                id,
+                              ],
+                              (err_product, res_product) => {
+                                if (err_product) {
+                                  console.log(err_product);
+                                  res.send({
+                                    data: "An Error Occured",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            );
                           }
                         }
                       );
@@ -729,21 +827,54 @@ router.post("/new_purchase", async (req, res) => {
                   console.log(err);
                   res.send({ data: "Error Occured.Try Again", status: false });
                 } else {
+                  let batch_id = nanoid(4);
                   conn.query(
-                    `INSERT INTO batch_tbl SET ?`,
-                    {
-                      product_id: parseInt(e.product_id),
-                      batch_no: e.batch_no,
-                      batch_qty: parseInt(e.qty),
-                      batch_expiry_date: e.expiry_date,
-                    },
-                    (err_batch, res_batch) => {
-                      if (err_batch) {
-                        console.log(err_batch);
-                        res.send({
-                          data: "An Error Occured. Try Again",
-                          status: false,
-                        });
+                    `SELECT * FROM batch_tbl WHERE batch_id = ?`,
+                    batch_id,
+                    (err_bat, res_bat) => {
+                      if (err_bat) {
+                        console.log(err_bat);
+                        res.send({ data: "An Error Occured", status: false });
+                      } else {
+                        res_bat.length === 0
+                          ? conn.query(
+                              `INSERT INTO batch_tbl SET ?`,
+                              {
+                                batch_id: batch_id,
+                                product_id: parseInt(e.product_id),
+                                batch_no: e.batch_no,
+                                batch_qty: parseInt(e.qty),
+                                batch_expiry_date: e.expiry_date,
+                              },
+                              (err_batch, res_batch) => {
+                                if (err_batch) {
+                                  console.log(err_batch);
+                                  res.send({
+                                    data: "An Error Occured. Try Again",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            )
+                          : conn.query(
+                              `INSERT INTO batch_tbl SET ?`,
+                              {
+                                batch_id: nanoid(4),
+                                product_id: parseInt(e.product_id),
+                                batch_no: e.batch_no,
+                                batch_qty: parseInt(e.qty),
+                                batch_expiry_date: e.expiry_date,
+                              },
+                              (bat_err, bat_res) => {
+                                if (bat_err) {
+                                  console.log(bat_err);
+                                  res.send({
+                                    data: "An Error Occured. Try Again",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            );
                       }
                     }
                   );
@@ -770,21 +901,54 @@ router.post("/new_purchase", async (req, res) => {
                   console.log(err3);
                   res.send({ data: "An Error Occured", status: false });
                 } else {
+                  let batch_id = nanoid(4);
                   conn.query(
-                    `INSERT INTO batch_tbl SET ?`,
-                    {
-                      product_id: parseInt(e.product_id),
-                      batch_no: e.batch_no,
-                      batch_qty: unit_qty,
-                      batch_expiry_date: e.expiry_date,
-                    },
-                    (err_batch, res_batch) => {
-                      if (err_batch) {
-                        console.log(err_batch);
-                        res.send({
-                          data: "An Error Occured. Try Again",
-                          status: false,
-                        });
+                    `SELECT * FROM batch_tbl WHERE batch_id = ?`,
+                    batch_id,
+                    (err_bat, res_bat) => {
+                      if (err_bat) {
+                        console.log(err_bat);
+                        res.send({ data: "An Error Occured", status: false });
+                      } else {
+                        res_bat.length === 0
+                          ? conn.query(
+                              `INSERT INTO batch_tbl SET ?`,
+                              {
+                                batch_id: batch_id,
+                                product_id: parseInt(e.product_id),
+                                batch_no: e.batch_no,
+                                batch_qty: parseInt(e.qty),
+                                batch_expiry_date: e.expiry_date,
+                              },
+                              (err_batch, res_batch) => {
+                                if (err_batch) {
+                                  console.log(err_batch);
+                                  res.send({
+                                    data: "An Error Occured. Try Again",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            )
+                          : conn.query(
+                              `INSERT INTO batch_tbl SET ?`,
+                              {
+                                batch_id: nanoid(4),
+                                product_id: parseInt(e.product_id),
+                                batch_no: e.batch_no,
+                                batch_qty: parseInt(e.qty),
+                                batch_expiry_date: e.expiry_date,
+                              },
+                              (bat_err, bat_res) => {
+                                if (bat_err) {
+                                  console.log(bat_err);
+                                  res.send({
+                                    data: "An Error Occured. Try Again",
+                                    status: false,
+                                  });
+                                }
+                              }
+                            );
                       }
                     }
                   );
