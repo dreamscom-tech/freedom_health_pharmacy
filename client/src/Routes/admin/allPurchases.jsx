@@ -11,6 +11,10 @@ import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
 
+//pdf
+import qz from "qz-tray";
+import Print from "../../components/print";
+
 class AllPurchases extends Component {
   constructor(props) {
     super(props);
@@ -41,6 +45,39 @@ class AllPurchases extends Component {
   handleClose = () => {
     this.setState({ ...this.state, open: false });
   };
+
+  print_pdf = (v) => {
+    let data_str = Print.print_str(this.state.purchases);
+    qz.websocket
+      .connect()
+      .then(() => {
+        return qz.printers.find("PDF");
+      })
+      .then((printer) => {
+        console.log(printer);
+        let config = qz.configs.create(printer);
+        let data = [
+          {
+            type: "pixel",
+            format: "html",
+            flavor: "plain", // or 'plain' if the data is raw HTML
+            data: data_str,
+          },
+        ];
+        return qz.print(config, data);
+      })
+      .then(() => {
+        return qz.websocket.disconnect();
+      })
+      .then(() => {
+        // process.exit(0);
+      })
+      .catch((err) => {
+        console.error(err);
+        // process.exit(1);
+      });
+  };
+
   render() {
     return (
       <>
@@ -54,6 +91,16 @@ class AllPurchases extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>Monthly Purchases Made</h3>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={this.print_pdf}
+                    >
+                      <span style={{ fontSize: "17.5px", marginRight: "10px" }}>
+                        <span className="las la-file-pdf"></span>
+                      </span>
+                      Save PDF
+                    </Button>
                   </div>
                   <div className="card-body">
                     <table style={{ width: "85%", margin: "auto" }}>

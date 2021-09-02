@@ -3,27 +3,27 @@ import user from "../app_config";
 import "../design/print_sale.css";
 
 class Print {
-  getDate() {
-    let date =
-      new Date(Date.now()).getDate() +
-      "/" +
-      (new Date(Date.now()).getMonth() + 1) +
-      "/" +
-      new Date(Date.now()).getFullYear();
-    return date;
-  }
+  static print_str = (data) => {
+    const getDate = () => {
+      let date =
+        new Date(Date.now()).getDate() +
+        "/" +
+        (new Date(Date.now()).getMonth() + 1) +
+        "/" +
+        new Date(Date.now()).getFullYear();
+      return date;
+    };
 
-  getTotals() {
-    let total = 0;
-    if (this.state.formData.length !== 0) {
-      this.state.formData.forEach((e) => {
-        total += parseInt(e.product_price) * parseInt(e.qty);
-      });
-    }
-    return total;
-  }
+    const getTotals = () => {
+      let total = 0;
+      if (this.state.formData.length !== 0) {
+        this.state.formData.forEach((e) => {
+          total += parseInt(e.product_price) * parseInt(e.qty);
+        });
+      }
+      return total;
+    };
 
-  print_str = (data) => {
     let print_str = "";
     print_str += `
         <div>
@@ -36,7 +36,7 @@ class Print {
             <div style="font-size:12px;">Sales Receipt</div>
             <div style="font-size:12px;">
               Date:
-              ${this.getDate()}
+              ${getDate()}
             </div>
             <table>
               <tr>
@@ -65,7 +65,7 @@ class Print {
               &nbsp;&nbsp;&nbsp;
               <span style="font-size:10px; margin-left:5px">Total</span>
               &nbsp;&nbsp;&nbsp;
-              <span style="font-size:10px;">${this.getTotals()}</span></div>`;
+              <span style="font-size:10px;">${getTotals()}</span></div>`;
     return print_str;
   };
 }

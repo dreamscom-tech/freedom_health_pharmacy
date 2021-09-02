@@ -176,7 +176,6 @@ router.post("/new_sale", async (req, res) => {
                         );
                       }
                     }
-<<<<<<< HEAD
                     if (parseInt(e.qty) < sum) {
                       for (let j = 0; j < batch_res.length - 1; j++) {
                         conn.query(
@@ -184,68 +183,6 @@ router.post("/new_sale", async (req, res) => {
                           batch_res[j].batch_id,
                           (err) => {
                             throw err;
-=======
-                  }
-                }
-              }
-            );
-          } else {
-            let unit_qty =
-              parseInt(
-                units.find((i) => i.selling_unit === e.selling_unit).qty
-              ) * parseInt(e.qty);
-            conn.query(
-              `SELECT * FROM batch_tbl WHERE product_id = ${id} LIMIT ${parseInt(
-                e.product_batch_index
-              )}`,
-              (unit_err, unit_res) => {
-                if (unit_err) {
-                  console.log(unit_err);
-                  res.send({
-                    data: "An Error Occured. Try Again",
-                    status: false,
-                  });
-                } else {
-                  let new_qty = 0;
-                  let new_qty_diff = 0;
-                  for (let x = 0; x < unit_res.length; x++) {
-                    new_qty += unit_res[x].batch_qty;
-                    if (new_qty < unit_qty) {
-                      let qty_ = unit_res[x].batch_qty - parseInt(e.qty);
-                      new_qty_diff += qty_;
-                      conn.query(
-                        `DELETE FROM batch_tbl WHERE batch_id=?`,
-                        unit_res[x].batch_id,
-                        (_err, _results) => {
-                          if (_err) {
-                            console.log(_err);
-                            res.send({
-                              data: "An Error Occured. Try Again",
-                              status: false,
-                            });
-                          } else {
-                            conn.query(
-                              `UPDATE products_tbl SET ? WHERE product_id = ?`,
-                              [
-                                {
-                                  product_qty:
-                                    new_qty < 0
-                                      ? res_first[0].product_qty + new_qty
-                                      : res_first[0].product_qty - new_qty,
-                                },
-                                id,
-                              ],
-                              (_err5, _res5) => {
-                                if (_err5) {
-                                  console.log(_err5);
-                                  res.send({
-                                    data: "An Error Occured. Try Again",
-                                    status: false,
-                                  });
-                                }
-                              }
-                            );
->>>>>>> c7db946e0a9c81d161e3119edb183bbb53fc539e
                           }
                         );
                       }
