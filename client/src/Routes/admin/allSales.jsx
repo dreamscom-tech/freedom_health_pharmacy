@@ -45,7 +45,7 @@ class AllSales extends Component {
     return (
       <>
         <input type="checkbox" id="nav-toggle" defaultChecked />
-        <Nav active="dashboard" />
+        <Nav active="finance" />
         <div className="main-content">
           <Header />
           <main>
@@ -56,9 +56,9 @@ class AllSales extends Component {
                     <h3>Monthly Sales Made</h3>
                     <Button variant="contained" color="primary">
                       <span style={{ fontSize: "17.5px", marginRight: "10px" }}>
-                        <span className="las la-print"></span>
+                        <span className="las la-file-pdf"></span>
                       </span>
-                      print
+                      Save PDF
                     </Button>
                   </div>
                   <div className="card-body">
