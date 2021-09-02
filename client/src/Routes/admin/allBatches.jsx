@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -11,8 +10,6 @@ import {
   Snackbar,
   IconButton,
   CircularProgress,
-  Menu,
-  MenuItem,
 } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import Nav from "./components/Nav";
@@ -29,14 +26,15 @@ class AllProducts extends Component {
     this.state = {
       AnchorEl: null,
       AnchorElDrugs: null,
-      products: [],
+      batches: [],
       loading: true,
       open: false,
       open_del: false,
       message: "Please Wait...",
       messageState: "",
+      batch_id: "",
     };
-    this.products();
+    this.batches();
   }
 
   handleOpenActions = (e) => {
@@ -52,13 +50,13 @@ class AllProducts extends Component {
     this.setState({ ...this.state, AnchorElDrugs: null });
   };
 
-  async products() {
-    const res = (await UsersApi.data("/user/all/products")) || [];
+  async batches() {
+    const res = (await UsersApi.data("/user/all/batches")) || [];
     if (res) {
       this.setState({
         ...this.state,
         loading: false,
-        products: res === "Error" ? [] : res,
+        batches: res === "Error" ? [] : res,
       });
     }
   }
@@ -70,7 +68,7 @@ class AllProducts extends Component {
   handleDelete = async () => {
     this.setState({ ...this.state, open_del: true, messageState: "info" });
     const res = await UsersApi.data(
-      `/user/all/delete/${this.state.product_id}`
+      `/user/all/delete_batch/${this.state.batch_id}`
     );
     if (res.status === true) {
       this.setState({
@@ -157,7 +155,7 @@ class AllProducts extends Component {
                           this.setState({
                             ...this.state,
                             loader: false,
-                            products: res === "Error" ? [] : res,
+                            batches: res === "Error" ? [] : res,
                           });
                         }
                       }}
@@ -169,13 +167,14 @@ class AllProducts extends Component {
                         <tr>
                           <td>Product Generic Name</td>
                           <td>Product Description</td>
-                          <td>Quantity</td>
+                          <td>Batch Number</td>
+                          <td>Batch Quantity</td>
                           <td></td>
                           <td></td>
                         </tr>
                       </thead>
                       <tbody>
-                        {this.state.products.length === 0 ? (
+                        {this.state.batches.length === 0 ? (
                           this.state.loading ? (
                             <tr>
                               <td>
@@ -184,25 +183,18 @@ class AllProducts extends Component {
                             </tr>
                           ) : (
                             <tr>
-                              <td>No Product Exists</td>
+                              <td>No Batch Exists</td>
                             </tr>
                           )
                         ) : (
-                          this.state.products.map((v, i) => {
+                          this.state.batches.map((v, i) => {
                             return (
                               <tr key={i}>
                                 <td>{v.product_generic_name}</td>
                                 <td>{v.product_description_name}</td>
-                                <td>{v.product_qty}</td>
-                                <td>
-                                  <Link
-                                    to={`/edit-product?product-id=${v.product_id}`}
-                                  >
-                                    <Button variant="contained" color="primary">
-                                      Edit
-                                    </Button>
-                                  </Link>
-                                </td>
+                                <td>{v.batch_no}</td>
+                                <td>{v.batch_qty}</td>
+                                <td></td>
                                 <td>
                                   <Button
                                     variant="contained"
@@ -211,7 +203,7 @@ class AllProducts extends Component {
                                       this.setState({
                                         ...this.state,
                                         open: true,
-                                        product_id: v.product_id,
+                                        batch_id: v.batch_id,
                                       });
                                     }}
                                   >
@@ -230,18 +222,19 @@ class AllProducts extends Component {
             </div>
           </main>
         </div>
-        {this.state.product_id ? (
+        {this.state.batch_id ? (
           <Dialog
             open={this.state.open}
             onClose={this.handleClose}
             aria-labelledby="form-dialog-title"
           >
             <DialogTitle id="form-dialog-title">
-              Want to Delete Product?
+              Want to Delete Product Batch?
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Press OK and Continue. This process is Irreversible
+                This removes a specific batch number. Press OK and Continue.
+                This process is Irreversible
               </DialogContentText>
             </DialogContent>
             <DialogActions>
