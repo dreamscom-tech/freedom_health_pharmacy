@@ -39,6 +39,7 @@ class Finance extends Component {
       today_expense: 0,
       sales: [],
       purchases: [],
+      print_sale: false,
     };
     this.income();
     this.expenses();
@@ -121,7 +122,7 @@ class Finance extends Component {
     this.setState({ ...this.state, AnchorEl: null });
   };
   handleCloseActionsDrugs = () => {
-    this.setState({ ...this.state, AnchorElDrugs: null });
+    this.setState({ ...this.state, AnchorElDrugs: null, print_sale: true });
   };
 
   render() {
@@ -240,11 +241,6 @@ class Finance extends Component {
                             See Monthly
                           </MenuItem>
                         </Link>
-                        <Link>
-                          <MenuItem onClick={this.handleCloseActionsDrugs}>
-                            Download
-                          </MenuItem>
-                        </Link>
                       </Menu>
                     </div>
                   </div>
@@ -326,11 +322,6 @@ class Finance extends Component {
                             See Monthly
                           </MenuItem>
                         </Link>
-                        <Link>
-                          <MenuItem onClick={this.handleCloseActions}>
-                            Download
-                          </MenuItem>
-                        </Link>
                       </Menu>
                     </div>
                   </div>
@@ -383,6 +374,7 @@ class Finance extends Component {
             </div>
           </main>
         </div>
+
         {/* Sale Dialog */}
         {this.state.dialog_data ? (
           <Dialog

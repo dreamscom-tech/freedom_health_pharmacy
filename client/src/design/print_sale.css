@@ -12,7 +12,7 @@
 }
 .print-pharmacy > span:nth-child(1) {
   display: block;
-  font-size: 10px;
+  font-size: 20px;
 }
 .print-pharmacy > span {
   display: block;
@@ -22,16 +22,17 @@
 .print-title {
   display: block;
   margin: 2px 0px;
-  font-size: 10px;
+  font-size: 15px;
 }
 .date,
 .attendant {
   text-align: left;
-  font-size: 8px;
+  font-size: 15px;
+  text-align: center;
 }
 .content {
   margin: 15px 0px;
-  font-size: 8px;
+  font-size: 15px;
 }
 .grid {
   /* width: 200px; */

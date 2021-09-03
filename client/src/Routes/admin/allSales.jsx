@@ -11,6 +11,9 @@ import Nav from "./components/Nav";
 import Header from "./components/Header";
 import UsersApi from "../../api/users";
 
+import ReactToPrint from "react-to-print";
+import Print from "../../components/print";
+
 class AllSales extends Component {
   constructor(props) {
     super(props);
@@ -33,7 +36,7 @@ class AllSales extends Component {
           sale.push(e);
         }
       });
-      this.setState({ ...this.state, sales: sale });
+      this.setState({ ...this.state, sales: sale, print: true });
     }
   }
 
@@ -54,12 +57,29 @@ class AllSales extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>Monthly Sales Made</h3>
-                    <Button variant="contained" color="primary">
-                      <span style={{ fontSize: "17.5px", marginRight: "10px" }}>
-                        <span className="las la-file-pdf"></span>
-                      </span>
-                      Save PDF
-                    </Button>
+
+                    <ReactToPrint
+                      trigger={() => {
+                        return (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ marginRight: 10 }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "17.5px",
+                                marginRight: "10px",
+                              }}
+                            >
+                              <i className="las la-file-pdf"></i>
+                            </span>
+                            Save PDF
+                          </Button>
+                        );
+                      }}
+                      content={() => this.componentRef}
+                    />
                   </div>
                   <div className="card-body">
                     <table style={{ width: "85%", margin: "auto" }}>
@@ -80,29 +100,17 @@ class AllSales extends Component {
                         ) : (
                           this.state.sales.map((v, i) => {
                             return (
-                              <>
-                                <tr key={i}>
-                                  <td>{i + 1}</td>
-                                  <td>{v.sales_amount}</td>
-                                  <td>{v.sales_discount}</td>
-                                  <td>{v.amount_paid}</td>
-                                  <td>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={(e) => {
-                                        this.setState({
-                                          ...this.state,
-                                          open: true,
-                                          dialog_data: v,
-                                        });
-                                      }}
-                                    >
-                                      Details
-                                    </Button>
-                                  </td>
-                                </tr>
-                              </>
+                              <tr key={i}>
+                                <td>{i + 1}</td>
+                                <td>{v.sales_amount}</td>
+                                <td>{v.sales_discount}</td>
+                                <td>{v.amount_paid}</td>
+                                <td>
+                                  <Button variant="contained" color="primary">
+                                    Details
+                                  </Button>
+                                </td>
+                              </tr>
                             );
                           })
                         )}
@@ -113,6 +121,17 @@ class AllSales extends Component {
               </div>
             </div>
           </main>
+        </div>
+        <div style={{ display: "none" }}>
+          {this.state.print ? (
+            <Print
+              ref={(el) => (this.componentRef = el)}
+              data={this.state.sales}
+              type="sales"
+            />
+          ) : (
+            <></>
+          )}
         </div>
         {this.state.dialog_data ? (
           <Dialog
