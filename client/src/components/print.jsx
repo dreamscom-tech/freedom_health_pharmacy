@@ -120,10 +120,16 @@ class Print extends Component {
                         let sold = JSON.parse(v.products_sold);
                         sold.forEach((p) => {
                           if (sold.length > 1) {
-                            products =
-                              products +
-                              `${this.getNameSpaces(p.product_name, 10)}` +
-                              ",";
+                            if (sold.indexOf(p) === sold.length - 1) {
+                              products =
+                                products +
+                                `${this.getNameSpaces(p.product_name, 10)}`;
+                            } else {
+                              products =
+                                products +
+                                `${this.getNameSpaces(p.product_name, 10)}` +
+                                ",";
+                            }
                           } else {
                             products =
                               products +

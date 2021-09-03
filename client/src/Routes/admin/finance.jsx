@@ -125,6 +125,25 @@ class Finance extends Component {
     this.setState({ ...this.state, AnchorElDrugs: null, print_sale: true });
   };
 
+  getNameSpaces(n, i) {
+    let name = n.split(" ")[0];
+    let name_formatted;
+    if (name.length === i) {
+      name_formatted = name + " ";
+    }
+    if (name.length > i) {
+      name_formatted = name.substring(0, i) + " ";
+    }
+    if (name.length < i) {
+      name_formatted = name;
+      let spaces = i - name.length;
+      for (let i = 0; i < spaces; i++) {
+        name_formatted = name_formatted + " ";
+      }
+    }
+    return name_formatted;
+  }
+
   render() {
     return (
       <>
@@ -248,8 +267,8 @@ class Finance extends Component {
                     <table width="100%">
                       <thead>
                         <tr>
+                          <td>Products</td>
                           <td>Total</td>
-                          <td>Discount</td>
                           <td>Paid</td>
                           <td></td>
                         </tr>
@@ -261,10 +280,33 @@ class Finance extends Component {
                           </tr>
                         ) : (
                           this.state.sales.map((v, i) => {
+                            let products = "";
+                            let sold = JSON.parse(v.products_sold);
+                            sold.forEach((p) => {
+                              if (sold.length > 1) {
+                                if (sold.indexOf(p) === sold.length - 1) {
+                                  products =
+                                    products +
+                                    `${this.getNameSpaces(p.product_name, 10)}`;
+                                } else {
+                                  products =
+                                    products +
+                                    `${this.getNameSpaces(
+                                      p.product_name,
+                                      10
+                                    )}` +
+                                    ",";
+                                }
+                              } else {
+                                products =
+                                  products +
+                                  `${this.getNameSpaces(p.product_name, 10)}`;
+                              }
+                            });
                             return (
                               <tr key={i}>
+                                <td>{products}</td>
                                 <td>{v.sales_amount}</td>
-                                <td>{v.sales_discount}</td>
                                 <td>{v.amount_paid}</td>
                                 <td>
                                   <Button
@@ -329,8 +371,8 @@ class Finance extends Component {
                     <table width="100%">
                       <thead>
                         <tr>
+                          <td>Products</td>
                           <td>Total</td>
-                          <td>Discount</td>
                           <td>Paid</td>
                           <td></td>
                         </tr>
@@ -342,10 +384,33 @@ class Finance extends Component {
                           </tr>
                         ) : (
                           this.state.purchases.map((v, i) => {
+                            let products = "";
+                            let sold = JSON.parse(v.products_purchased);
+                            sold.forEach((p) => {
+                              if (sold.length > 1) {
+                                if (sold.indexOf(p) === sold.length - 1) {
+                                  products =
+                                    products +
+                                    `${this.getNameSpaces(p.product_name, 10)}`;
+                                } else {
+                                  products =
+                                    products +
+                                    `${this.getNameSpaces(
+                                      p.product_name,
+                                      10
+                                    )}` +
+                                    ",";
+                                }
+                              } else {
+                                products =
+                                  products +
+                                  `${this.getNameSpaces(p.product_name, 10)}`;
+                              }
+                            });
                             return (
                               <tr key={i}>
+                                <td>{products}</td>
                                 <td>{v.purchase_t_amount}</td>
-                                <td>{v.purchase_discount}</td>
                                 <td>{v.purchase_amount}</td>
                                 <td>
                                   <Button
