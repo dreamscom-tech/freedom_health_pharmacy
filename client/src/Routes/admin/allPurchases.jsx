@@ -12,7 +12,7 @@ import Header from "./components/Header";
 import UsersApi from "../../api/users";
 
 //pdf
-import qz from "qz-tray";
+import ReactToPrint from "react-to-print";
 import Print from "../../components/print";
 
 class AllPurchases extends Component {
@@ -39,43 +39,12 @@ class AllPurchases extends Component {
       this.setState({
         ...this.state,
         purchases: purchase,
+        print: true,
       });
     }
   }
   handleClose = () => {
     this.setState({ ...this.state, open: false });
-  };
-
-  print_pdf = (v) => {
-    let data_str = Print.print_str(this.state.purchases);
-    qz.websocket
-      .connect()
-      .then(() => {
-        return qz.printers.find("PDF");
-      })
-      .then((printer) => {
-        console.log(printer);
-        let config = qz.configs.create(printer);
-        let data = [
-          {
-            type: "pixel",
-            format: "html",
-            flavor: "plain", // or 'plain' if the data is raw HTML
-            data: data_str,
-          },
-        ];
-        return qz.print(config, data);
-      })
-      .then(() => {
-        return qz.websocket.disconnect();
-      })
-      .then(() => {
-        // process.exit(0);
-      })
-      .catch((err) => {
-        console.error(err);
-        // process.exit(1);
-      });
   };
 
   render() {
@@ -91,16 +60,28 @@ class AllPurchases extends Component {
                 <div className="card">
                   <div className="card-header">
                     <h3>Monthly Purchases Made</h3>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={this.print_pdf}
-                    >
-                      <span style={{ fontSize: "17.5px", marginRight: "10px" }}>
-                        <span className="las la-file-pdf"></span>
-                      </span>
-                      Save PDF
-                    </Button>
+                    <ReactToPrint
+                      trigger={() => {
+                        return (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ marginRight: 10 }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "17.5px",
+                                marginRight: "10px",
+                              }}
+                            >
+                              <i className="las la-file-pdf"></i>
+                            </span>
+                            Save PDF
+                          </Button>
+                        );
+                      }}
+                      content={() => this.componentRef}
+                    />
                   </div>
                   <div className="card-body">
                     <table style={{ width: "85%", margin: "auto" }}>
@@ -152,6 +133,17 @@ class AllPurchases extends Component {
               </div>
             </div>
           </main>
+        </div>
+        <div style={{ display: "none" }}>
+          {this.state.print ? (
+            <Print
+              ref={(el) => (this.componentRef = el)}
+              data={this.state.purchases}
+              type="purchases"
+            />
+          ) : (
+            <></>
+          )}
         </div>
         {this.state.dialog_data ? (
           <Dialog
