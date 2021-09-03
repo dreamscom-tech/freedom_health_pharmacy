@@ -96,6 +96,18 @@ td {
   }
 }
 
+@media only screen and (max-width: 768px) {
+  .text_field_all_products {
+    width: 40% !important;
+  }
+  .inputs_ctr_np {
+    flex-direction: column;
+  }
+  .tbl_ctr_np {
+    overflow-x: scroll;
+  }
+}
+
 @media screen and (max-width: 600px) {
   /* payments responsive */
   .inputCtrPaymentsDepart {
