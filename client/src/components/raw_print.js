@@ -9,6 +9,8 @@ export default class RawPrint {
     const total_amount = parseInt(v.total_amount);
     const discount = parseInt(v.discount) || 0;
     const amount_paid = parseInt(v.pay_amount);
+    const customer = v.customer;
+    const sale = v.customer ? "Wholesale" : "Retail";
     // return [
     //   "\x1B" + "\x40", // init
     //   "\x1B" + "\x61" + "\x31", // center align
@@ -89,7 +91,7 @@ export default class RawPrint {
     let data = [
       "\x1B" + "\x40",
       "\x1B" + "\x61" + "\x30", // left align
-      "FREEDOM HEALTH AND SUPPLIES LTD" + "\x0A",
+      "FREEDOM HEALTH AND SUPPLIES LTD" + "\x4C" + "\x46",
       "Plot 7, Chegere Road Apac" + "\x0A", // text and line break
       "P.O.Box 120 Apac" + "\x0A", // text and line break
       "Tel: 0393 193 423" + "\x0A", // text and line break
@@ -99,6 +101,7 @@ export default class RawPrint {
       "\x1B" + "\x45" + "\x0A",
       `Date: ${getDate()}` + "\x0A", // text and line break
       "\x0A", // text and line break
+      `${customer ? `Customer:  ${customer}` : ""}` + "\x0A",
       "---------------------------------------------" + "\x0A",
       "\x1B" + "\x45" + "\x0D", // bold on
       "Name                Qty   Unit     Amount(Shs)" + "\x0A",
@@ -121,6 +124,7 @@ export default class RawPrint {
       "\x1B" + "\x45" + "\x0A", // bold off
       "---------------------------------------------" + "\x0A",
       "\x0A",
+      `Sale       ${sale}` + "\x0A",
       `Total      UGX: ${total_amount}` + "\x0A",
       `Discount   UGX: ${discount}` + "\x0A",
       `Paid       UGX: ${amount_paid}` + "\x0A",

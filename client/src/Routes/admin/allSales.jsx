@@ -106,7 +106,7 @@ class AllSales extends Component {
                         <tr>
                           <td>Products</td>
                           <td>Total</td>
-                          <td>Discont</td>
+                          <td>Discount</td>
                           <td>Paid</td>
                           <td></td>
                         </tr>

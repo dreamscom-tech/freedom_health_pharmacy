@@ -59,16 +59,16 @@ class NewSale extends Component {
       active_selling_unit: "",
       active_selling_price: "",
       products: [],
+      customers: [],
       formData: [],
       total: 0,
       discount: 0,
-      batch_qty: 0,
-      batch_index: 1,
+      finish_btn_disabled: false,
     };
+    this.customers();
   }
 
   print_receipt = (v) => {
-    let data_str = this.print_str(this.state.formData);
     qz.websocket
       .connect()
       .then(() => {
@@ -91,12 +91,6 @@ class NewSale extends Component {
       });
   };
 
-  //router after sale
-  nextPath = (path) => {
-    this.props.history.push(path);
-  };
-  //router after sale
-
   //date for receipt
   getDate() {
     let date =
@@ -108,9 +102,26 @@ class NewSale extends Component {
     return date;
   }
   //date for receipt
+
+  //customers
+  customers = async () => {
+    const res = (await UsersApi.data("/user/sale/customers")) || [];
+    if (res) {
+      this.setState({
+        ...this.state,
+        customers: res !== "Error" ? res : [],
+      });
+    }
+  };
+  //customers
   handleSale = async (e) => {
     e.preventDefault();
-    this.setState({ ...this.state, open: true, messageState: "info" });
+    this.setState({
+      ...this.state,
+      open: true,
+      messageState: "info",
+      finish_btn_disabled: true,
+    });
     const fd = new FormData(e.target);
     let content = {};
     fd.forEach((value, key) => {
@@ -150,9 +161,9 @@ class NewSale extends Component {
         message: res.data,
         messageState: "success",
       });
-      setTimeout(() => {
-        this.nextPath("/new-sale");
-      }, 200);
+      // setTimeout(() => {
+      //   // window.location.reload();
+      // }, 200);
     } else {
       this.setState({
         ...this.state,
@@ -412,7 +423,7 @@ class NewSale extends Component {
                   autoComplete="off"
                   onSubmit={this.handleSubmit}
                 >
-                  <div className="card-header card-header-payments">
+                  <div className="card-header ">
                     <div>
                       <FormControl
                         variant="outlined"
@@ -670,6 +681,7 @@ class NewSale extends Component {
                         color="primary"
                         type="submit"
                         style={{ marginRight: 10 }}
+                        disabled={this.state.finish_btn_disabled}
                       >
                         <span
                           style={{ fontSize: "17.5px", marginRight: "10px" }}
@@ -680,7 +692,11 @@ class NewSale extends Component {
                       </Button>
                     </div>
                   </div>
-                  <Finish t={this.getTotals()} />
+                  <Finish
+                    t={this.getTotals()}
+                    sale_type={this.state.active_sale_type}
+                    customers={this.state.customers}
+                  />
                 </form>
               </div>
             </div>
@@ -693,7 +709,7 @@ class NewSale extends Component {
 
 export default NewSale;
 
-function Finish({ t }) {
+function Finish({ t, sale_type, customers }) {
   const [discount, setDiscount] = useState(0);
   return (
     <div className="_finish_purchase_ctr">
@@ -731,12 +747,35 @@ function Finish({ t }) {
         }}
       />
       <FormControl
-        style={{
-          width: "75%",
-          marginLeft: "20px",
-          marginBottom: "50px",
-        }}
-      ></FormControl>
+        variant="outlined"
+        label="customer"
+        style={
+          sale_type === "retail"
+            ? { display: "none" }
+            : { width: "75%", margin: "20px" }
+        }
+      >
+        <InputLabel id="customer">Customer</InputLabel>
+        <Select
+          inputProps={{ name: "customer" }}
+          label="customer"
+          id="select_customer"
+          defaultValue=""
+        >
+          {customers.length === 0
+            ? "No Customer Added"
+            : customers.map((v, i) => {
+                return (
+                  <MenuItem
+                    value={`${v.customer_surname} ${v.customer_lastname}`}
+                    key={i}
+                  >
+                    {`${v.customer_surname} ${v.customer_lastname}`}
+                  </MenuItem>
+                );
+              })}
+        </Select>
+      </FormControl>
     </div>
   );
 }

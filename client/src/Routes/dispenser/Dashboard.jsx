@@ -226,7 +226,7 @@ class Dashboard extends Component {
                       <thead>
                         <tr>
                           <td>Total</td>
-                          <td>Discont</td>
+                          <td>Discount</td>
                           <td>Paid</td>
                           <td></td>
                         </tr>

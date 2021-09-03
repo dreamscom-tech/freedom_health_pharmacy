@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
 
 :root {
+  /* --main-color: #18a594; */
   --main-color: #4671ff;
   --color-dark: #1d2231;
   --text-grey: #8390a2;
@@ -320,6 +321,9 @@ td {
 }
 
 @media only screen and (max-width: 1024px) {
+  .small-none {
+    display: none !important;
+  }
   .cards {
     grid-template-columns: repeat(2, 1fr);
   }

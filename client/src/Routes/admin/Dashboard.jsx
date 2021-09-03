@@ -239,6 +239,7 @@ class Dashboard extends Component {
                           window.location.reload();
                         }}
                         style={{ marginRight: "15px" }}
+                        className="small-none"
                       >
                         <span
                           style={{ fontSize: "17.5px", marginLeft: "10px" }}

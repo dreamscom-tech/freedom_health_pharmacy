@@ -121,7 +121,7 @@ class NewCustomer extends Component {
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginInline: 10 }}
+                          style={{ marginRight: 10 }}
                         >
                           Cancel
                         </Button>
@@ -130,7 +130,7 @@ class NewCustomer extends Component {
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginInline: 10 }}
+                          style={{ marginLeft: 10 }}
                         >
                           Save
                         </Button>
@@ -170,6 +170,8 @@ class NewCustomer extends Component {
                                 margin: "20px",
                               }}
                             />
+                          </div>
+                          <div className="inpts_center">
                             <FormControl
                               variant="outlined"
                               label="type"
@@ -191,30 +193,6 @@ class NewCustomer extends Component {
                                 <MenuItem value="Wholesaler">
                                   Wholesaler
                                 </MenuItem>
-                              </Select>
-                            </FormControl>
-                          </div>
-                          <div className="inpts_center">
-                            <FormControl
-                              variant="outlined"
-                              label="address"
-                              style={{
-                                width: "75%",
-                                margin: "20px",
-                              }}
-                            >
-                              <InputLabel id="address">Address</InputLabel>
-                              <Select
-                                inputProps={{ name: "address" }}
-                                label="address"
-                                id="select_address"
-                                defaultValue=""
-                              >
-                                <MenuItem value="Aduku">Aduku</MenuItem>
-                                <MenuItem value="Lira">Lira</MenuItem>
-                                <MenuItem value="Gulu">Gulu</MenuItem>
-                                <MenuItem value="Apac">Apac</MenuItem>
-                                <MenuItem value="Kampala">Kampala</MenuItem>
                               </Select>
                             </FormControl>
                           </div>
