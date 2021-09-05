@@ -10,11 +10,11 @@ export default class RawPrint {
     const discount = parseInt(v.discount) || 0;
     const amount_paid = parseInt(v.pay_amount);
     const customer = v.customer;
-    const sale = v.customer ? "Wholesale" : "Retail";
+    const sale = v.sale_type;
     // return [
     //   "\x1B" + "\x40", // init
     //   "\x1B" + "\x61" + "\x31", // center align
-    //   "Beverly Hills, CA  90210" + "\x0A",
+    //   "Beverly Hills, CA  90210" + "\x1B" + "\x74" + "\x13" + "\xAA" + "\x0A",
     //   "\x0A", // line break
     //   "www.qz.io" + "\x0A", // text and line break
     //   "\x0A", // line break
@@ -91,21 +91,21 @@ export default class RawPrint {
     let data = [
       "\x1B" + "\x40",
       "\x1B" + "\x61" + "\x30", // left align
-      "FREEDOM HEALTH AND SUPPLIES LTD" + "\x4C" + "\x46",
-      "Plot 7, Chegere Road Apac" + "\x0A", // text and line break
-      "P.O.Box 120 Apac" + "\x0A", // text and line break
-      "Tel: 0393 193 423" + "\x0A", // text and line break
-      "\x0A",
+      "FREEDOM HEALTH AND SUPPLIES LTD" + "\x0D" + "\x0A",
+      "Plot 7, Chegere Road Apac" + "\x0D" + "\x0A", // text and line break
+      "P.O.Box 120 Apac" + "\x0D" + "\x0A", // text and line break
+      "Tel: 0393 193 423" + "\x0D" + "\x0A", // text and line break
+      "\x0D" + "\x0A",
       "\x1B" + "\x45" + "\x0D", // bold on
-      "SALES RECEIPT" + "\x0A", // text and line break
-      "\x1B" + "\x45" + "\x0A",
-      `Date: ${getDate()}` + "\x0A", // text and line break
-      "\x0A", // text and line break
-      `${customer ? `Customer:  ${customer}` : ""}` + "\x0A",
-      "---------------------------------------------" + "\x0A",
+      "SALES RECEIPT" + "\x0D" + "\x0A", // text and line break
+      "\x1B" + "\x45" + "\x0D" + "\x0A",
+      `Date: ${getDate()}` + "\x0D" + "\x0A", // text and line break
+      "\x0D" + "\x0A", // text and line break
+      `${customer ? `Customer:  ${customer}` : ""}` + "\x0D" + "\x0A",
+      "---------------------------------------------" + "\x0D" + "\x0A",
       "\x1B" + "\x45" + "\x0D", // bold on
-      "Name                Qty   Unit     Amount(Shs)" + "\x0A",
-      "\x1B" + "\x45" + "\x0A", // bold off
+      "Name                Qty   Unit     Amount(Shs)" + "\x0D" + "\x0A",
+      "\x1B" + "\x45" + "\x0D" + "\x0A", // bold off
     ]; // text and line break
     values.forEach((v, i) => {
       data.push(
@@ -114,25 +114,27 @@ export default class RawPrint {
           6
         )}${getNameSpaces(v.selling_unit, 10)}${
           parseInt(v.product_price) * parseInt(v.qty)
-        }` + "\x0A"
+        }` +
+          "\x0D" +
+          "\x0A"
       );
     });
 
     data.push("\x1B" + "\x45" + "\x0D");
     let data_with_footer = [
       ...data,
-      "\x1B" + "\x45" + "\x0A", // bold off
-      "---------------------------------------------" + "\x0A",
-      "\x0A",
-      `Sale       ${sale}` + "\x0A",
-      `Total      UGX: ${total_amount}` + "\x0A",
-      `Discount   UGX: ${discount}` + "\x0A",
-      `Paid       UGX: ${amount_paid}` + "\x0A",
-      "\x0A",
-      "Thank You" + "\x0A",
-      `Served By: ${user.user.user_first_name}` + "\x0A",
-      "Be Healthy, Be Happy" + "\x0A",
-      "\x0A",
+      "\x1B" + "\x45" + "\x0D" + "\x0A", // bold off
+      "---------------------------------------------" + "\x0D" + "\x0A",
+      "\x0D" + "\x0A",
+      `Sale       ${sale}` + "\x0D" + "\x0A",
+      `Total      UGX: ${total_amount}` + "\x0D" + "\x0A",
+      `Discount   UGX: ${discount}` + "\x0D" + "\x0A",
+      `Paid       UGX: ${amount_paid}` + "\x0D" + "\x0A",
+      "\x0D" + "\x0A",
+      "Thank You" + "\x0D" + "\x0A",
+      `Served By: ${user.user.user_first_name}` + "\x0D" + "\x0A",
+      "Be Healthy, Be Happy" + "\x0D" + "\x0A",
+      "\x0D" + "\x0A",
       "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
     ];
 

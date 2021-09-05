@@ -72,7 +72,7 @@ class NewSale extends Component {
     qz.websocket
       .connect()
       .then(() => {
-        return qz.printers.find("Generic");
+        return qz.printers.find("File");
       })
       .then((printer) => {
         console.log(printer);
@@ -116,6 +116,7 @@ class NewSale extends Component {
   //customers
   handleSale = async (e) => {
     e.preventDefault();
+    if (this.state.finish_btn_disabled) return;
     this.setState({
       ...this.state,
       open: true,
@@ -160,10 +161,11 @@ class NewSale extends Component {
         open: true,
         message: res.data,
         messageState: "success",
+        finish_btn_disabled: false,
       });
-      // setTimeout(() => {
-      //   // window.location.reload();
-      // }, 200);
+      setTimeout(() => {
+        window.location.reload();
+      }, 700);
     } else {
       this.setState({
         ...this.state,
@@ -696,6 +698,12 @@ class NewSale extends Component {
                     t={this.getTotals()}
                     sale_type={this.state.active_sale_type}
                     customers={this.state.customers}
+                  />
+                  <input
+                    type="text"
+                    hidden
+                    defaultValue={this.state.active_sale_type}
+                    name="sale_type"
                   />
                 </form>
               </div>
