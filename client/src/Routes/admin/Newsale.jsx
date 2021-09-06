@@ -72,7 +72,7 @@ class NewSale extends Component {
     qz.websocket
       .connect()
       .then(() => {
-        return qz.printers.find("File");
+        return qz.printers.find("Generic");
       })
       .then((printer) => {
         console.log(printer);
