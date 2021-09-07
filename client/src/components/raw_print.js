@@ -31,7 +31,7 @@ export default class RawPrint {
     //   "Baklava (Qty 4)       9.00" + "\x1B" + "\x74" + "\x13" + "\xAA", //print special char symbol after numeric
     //   "\x0A",
     //   "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" + "\x0A",
-    //   "\x1B" + "\x45" + "\x0D", // bold on
+    //   "\x1B" + "\x45", // bold on
     //   "Here's some bold text!",
     //   "\x1B" + "\x45" + "\x0A", // bold off
     //   "\x0A" + "\x0A",
@@ -60,23 +60,28 @@ export default class RawPrint {
     // ];
     //functions
     const getDate = () => {
+      let month =
+        new Date(Date.now()).getMonth() + 1 < 10
+          ? "0" + (new Date(Date.now()).getMonth() + 1)
+          : new Date(Date.now()).getMonth() + 1;
       let date =
-        new Date(Date.now()).getDate() +
-        "/" +
-        (new Date(Date.now()).getMonth() + 1) +
-        "/" +
-        new Date(Date.now()).getFullYear();
-      return date;
+        new Date(Date.now()).getDate() < 10
+          ? "0" + new Date(Date.now()).getDate()
+          : new Date(Date.now()).getDate();
+
+      let date_str =
+        date + "/" + month + "/" + new Date(Date.now()).getFullYear();
+      return date_str;
     };
 
     const getNameSpaces = (n, i) => {
-      let name = n.split(" ")[0];
+      let name = n;
       let name_formatted;
       if (name.length === i) {
         name_formatted = name;
       }
       if (name.length > i) {
-        name_formatted = name.substring(0, i);
+        name_formatted = name.substring(0, i - 2) + "..";
       }
       if (name.length < i) {
         name_formatted = name;
@@ -85,59 +90,66 @@ export default class RawPrint {
           name_formatted = name_formatted + " ";
         }
       }
-      return name_formatted;
+      return name_formatted + " ";
     };
+    // `${customer ? `Customer:  ${customer}` : ""}`,
     //functions
     let data = [
-      "\x1B" + "\x40",
-      "\x1B" + "\x61" + "\x30", // left align
-      "FREEDOM HEALTH AND SUPPLIES LTD" + "\x0D" + "\x0A",
-      "Plot 7, Chegere Road Apac" + "\x0D" + "\x0A", // text and line break
-      "P.O.Box 120 Apac" + "\x0D" + "\x0A", // text and line break
-      "Tel: 0393 193 423" + "\x0D" + "\x0A", // text and line break
-      "\x0D" + "\x0A",
-      "\x1B" + "\x45" + "\x0D", // bold on
-      "SALES RECEIPT" + "\x0D" + "\x0A", // text and line break
-      "\x1B" + "\x45" + "\x0D" + "\x0A",
-      `Date: ${getDate()}` + "\x0D" + "\x0A", // text and line break
-      "\x0D" + "\x0A", // text and line break
-      `${customer ? `Customer:  ${customer}` : ""}` + "\x0D" + "\x0A",
-      "---------------------------------------------" + "\x0D" + "\x0A",
-      "\x1B" + "\x45" + "\x0D", // bold on
-      "Name                Qty   Unit     Amount(Shs)" + "\x0D" + "\x0A",
-      "\x1B" + "\x45" + "\x0D" + "\x0A", // bold off
-    ]; // text and line break
-    values.forEach((v, i) => {
-      data.push(
-        `${getNameSpaces(v.product_name, 20)}${getNameSpaces(
-          v.qty,
-          6
-        )}${getNameSpaces(v.selling_unit, 10)}${
-          parseInt(v.product_price) * parseInt(v.qty)
-        }` +
-          "\x0D" +
-          "\x0A"
-      );
-    });
-
-    data.push("\x1B" + "\x45" + "\x0D");
-    let data_with_footer = [
-      ...data,
-      "\x1B" + "\x45" + "\x0D" + "\x0A", // bold off
-      "---------------------------------------------" + "\x0D" + "\x0A",
-      "\x0D" + "\x0A",
-      `Sale       ${sale}` + "\x0D" + "\x0A",
-      `Total      UGX: ${total_amount}` + "\x0D" + "\x0A",
-      `Discount   UGX: ${discount}` + "\x0D" + "\x0A",
-      `Paid       UGX: ${amount_paid}` + "\x0D" + "\x0A",
-      "\x0D" + "\x0A",
-      "Thank You" + "\x0D" + "\x0A",
-      `Served By: ${user.user.user_first_name}` + "\x0D" + "\x0A",
-      "Be Healthy, Be Happy" + "\x0D" + "\x0A",
-      "\x0D" + "\x0A",
-      "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
+      "------------------------------------------------",
+      "                                                ",
+      "FREEDOM HEALTH AND SUPPLIES LTD                 ",
+      "Plot 7, Chegere Road Apac                       ",
+      "P.O.Box 120 Apac                                ",
+      "Tel: 0393 193 423                               ",
+      "                                                ",
+      "SALES RECEIPT                                   ",
+      "                                                ",
+      "Date: " + getDate() + "                                ",
+      "                                                ",
+      "------------------------------------------------",
+      "Name                  Qty   Unit     Amount(Shs)",
     ];
 
+    values.forEach((v, i) => {
+      data.push(
+        `${getNameSpaces(v.product_name, 21)}${getNameSpaces(
+          v.qty,
+          5
+        )}${getNameSpaces(v.selling_unit, 8)}${getNameSpaces(
+          (parseInt(v.product_price) * parseInt(v.qty)).toString(),
+          10
+        )}`
+      );
+    });
+    let data_with_footer = [
+      ...data,
+      "------------------------------------------------",
+      `Sale          ${getNameSpaces(sale, 10)}                       `,
+      `Total         UGX: ${getNameSpaces(
+        total_amount.toString(),
+        8
+      )}                    `,
+      `Discount      UGX: ${getNameSpaces(
+        discount.toString(),
+        8
+      )}                    `,
+      `Paid          UGX: ${getNameSpaces(
+        amount_paid.toString(),
+        8
+      )}                    `,
+      "                                                ",
+      "Thank You                                       ",
+      `Served By: ${getNameSpaces(
+        user.user.user_first_name,
+        19
+      )}                 `,
+      "Be Healthy, Be Happy                            ",
+      "                                                ",
+      "------------------------------------------------",
+    ];
+    // "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
+
+    // return data;
     return data_with_footer;
   };
 }

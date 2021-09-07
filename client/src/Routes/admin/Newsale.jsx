@@ -163,9 +163,9 @@ class NewSale extends Component {
         messageState: "success",
         finish_btn_disabled: false,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 700);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 700);
     } else {
       this.setState({
         ...this.state,
@@ -702,8 +702,9 @@ class NewSale extends Component {
                   <input
                     type="text"
                     hidden
-                    defaultValue={this.state.active_sale_type}
+                    value={this.state.active_sale_type}
                     name="sale_type"
+                    onChange={() => {}}
                   />
                 </form>
               </div>
