@@ -27,21 +27,74 @@ class EditProduct extends Component {
       open: false,
       message: "Please Wait...",
       messageState: "",
-      product: {},
+      suppliers: [],
       units: [],
       new_unit_error: false,
+      empty_name_error: false,
       selling_units: [],
+      product: {},
+      re_order: 0,
     };
-    this.product();
+    this.units();
   }
+  async units() {
+    const res = (await UsersApi.data("/user/all/units")) || [];
+    if (res) {
+      this.setState(
+        {
+          ...this.state,
+          selling_units: res === "Error" ? [] : res,
+        },
+        () => {
+          this.product();
+        }
+      );
+    }
+  }
+
+  //if json string
+  IsJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+  //if json string
 
   async product() {
     let id = parseInt(
       new URLSearchParams(window.location.search).get("product-id")
     );
-    const [res] = await UsersApi.data(`/user/all/product/${id}`);
+    const [res] = await UsersApi.data(`/user/sale/product/${id}`);
     if (res) {
-      this.setState({ ...this.state, product: res === "Error" ? {} : res });
+      const units = this.IsJsonString(res.product_units)
+        ? JSON.parse(res.product_units)
+        : [];
+      const re_order =
+        units.length === 0
+          ? 0
+          : (parseInt(res.product_re_order) || 0) /
+              parseInt(units[units.length - 1].qty) || 0;
+      let units_arr = [];
+      for (let i = 0; i < units.length; i++) {
+        let unit = units[i];
+        if (unit.qty && unit.selling_unit) {
+          if (i === 0) {
+            units_arr.push(unit);
+          } else {
+            unit.qty = parseInt(units[i].qty) / parseInt(units_arr[i - 1].qty);
+            units_arr.push(unit);
+          }
+        }
+      }
+      this.setState({
+        ...this.state,
+        units: units_arr,
+        re_order,
+        product: res === "Error" ? {} : res,
+      });
     }
   }
 
@@ -53,12 +106,32 @@ class EditProduct extends Component {
     fd.forEach((value, key) => {
       _fcontent[key] = value;
     });
+    if (this.state.units.length === 0) {
+      this.setState({
+        ...this.state,
+        open: true,
+        message: "No Selling Units Registered",
+        messageState: "error",
+      });
+      return;
+    }
+    if (!_fcontent["generic_name"] || !_fcontent["re_order_qty"]) {
+      this.setState({
+        ...this.state,
+        open: true,
+        message: "These fields are missing",
+        messageState: "error",
+        empty_name_error: true,
+      });
+      return;
+    }
     let id = parseInt(
       new URLSearchParams(window.location.search).get("product-id")
     );
     _fcontent["units"] = this.state.units;
     let api = new FormsApi();
     let res = await api.post(`/user/sale/edit_product/${id}`, _fcontent);
+
     if (res.status === true) {
       this.setState({
         ...this.state,
@@ -81,7 +154,13 @@ class EditProduct extends Component {
     if (reason === "clickaway") {
       return;
     }
-    this.setState({ ...this.state, open: false });
+    this.setState({
+      ...this.state,
+      open: false,
+      message: "Please Wait...",
+      messageState: "info",
+      empty_name_error: false,
+    });
   };
 
   render() {
@@ -132,15 +211,13 @@ class EditProduct extends Component {
                     }}
                   >
                     <div className="form-header-ctr">
-                      <div className="">
-                        <h3>Edit Product</h3>
-                      </div>
+                      <h3 className="">Medicine - Edit</h3>
                       <div className="">
                         <Button
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginInline: 10 }}
+                          style={{ marginRight: 10 }}
                           onClick={() => {
                             window.location.reload();
                           }}
@@ -152,7 +229,7 @@ class EditProduct extends Component {
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginInline: 10 }}
+                          style={{ marginLeft: 10 }}
                         >
                           Save
                         </Button>
@@ -162,14 +239,18 @@ class EditProduct extends Component {
                   <div className="card-body">
                     <div>
                       <div className="inputCtr">
-                        <h4>Medicine Entry</h4>
                         <div className="inputs_ctr_np">
                           <div className="inputs_left_np">
                             <TextField
+                              error={this.state.empty_name_error}
                               name="generic_name"
                               variant="outlined"
-                              helperText="Generic Name"
-                              value={this.state.product.product_generic_name}
+                              label="Generic Name"
+                              value={
+                                this.state.product.product_generic_name
+                                  ? this.state.product.product_generic_name
+                                  : "..."
+                              }
                               style={{
                                 width: "75%",
                                 margin: "20px",
@@ -184,25 +265,67 @@ class EditProduct extends Component {
                                 });
                               }}
                             />
-                            <TextField
-                              name="description"
-                              variant="outlined"
-                              helperText="Medicine Description"
-                              value={
-                                this.state.product.product_description_name
-                              }
+                            <div
+                              className=""
                               style={{
+                                display: "flex",
+                                justifyContent: "space-between",
                                 width: "75%",
                                 margin: "20px",
                               }}
+                            >
+                              <TextField
+                                error={this.state.empty_name_error}
+                                value={this.state.re_order}
+                                type="number"
+                                name="re_order_qty"
+                                variant="outlined"
+                                label="Re-order Qty"
+                                style={{ flex: 1, marginRight: "5px" }}
+                                onChange={(e) => {
+                                  this.setState({
+                                    ...this.state,
+                                    re_order: e.target.value,
+                                  });
+                                }}
+                              />
+                              <TextField
+                                value={
+                                  this.state.units.length > 0 &&
+                                  this.state.units[this.state.units.length - 1]
+                                    .selling_unit
+                                    ? this.state.units[
+                                        this.state.units.length - 1
+                                      ].selling_unit
+                                    : ""
+                                }
+                                name="re_order_unit"
+                                variant="outlined"
+                                label="Unit"
+                                style={{ flex: 1, marginLeft: "5px" }}
+                              />
+                            </div>
+                            <TextField
+                              name="description"
+                              variant="outlined"
+                              label="Medicine Description"
+                              value={
+                                this.state.product.product_description_name
+                                  ? this.state.product.product_description_name
+                                  : "..."
+                              }
                               onChange={(e) => {
                                 this.setState({
                                   ...this.state,
                                   product: {
                                     ...this.state.product,
-                                    product_description: e.target.value,
+                                    product_description_name: e.target.value,
                                   },
                                 });
+                              }}
+                              style={{
+                                width: "75%",
+                                margin: "20px",
                               }}
                             />
                           </div>
@@ -251,7 +374,10 @@ class EditProduct extends Component {
                                                     : `Unit ${i + 1}`
                                                 }
                                                 id="select_selling_unit"
-                                                defaultValue=""
+                                                value={
+                                                  this.state.units[i]
+                                                    .selling_unit
+                                                }
                                                 onChange={(e) => {
                                                   let units_change =
                                                     this.state.units;
@@ -269,16 +395,12 @@ class EditProduct extends Component {
                                                   : this.state.selling_units.map(
                                                       (v, i) => {
                                                         return (
-                                                          <>
-                                                            <MenuItem
-                                                              value={
-                                                                v.unit_name
-                                                              }
-                                                              key={i}
-                                                            >
-                                                              {v.unit_name}
-                                                            </MenuItem>
-                                                          </>
+                                                          <MenuItem
+                                                            value={v.unit_name}
+                                                            key={i}
+                                                          >
+                                                            {v.unit_name}
+                                                          </MenuItem>
                                                         );
                                                       }
                                                     )}
@@ -289,7 +411,11 @@ class EditProduct extends Component {
                                             <TextField
                                               multiline={true}
                                               variant="standard"
-                                              defaultValue={i === 0 ? "1" : ""}
+                                              value={
+                                                i === 0
+                                                  ? "1"
+                                                  : this.state.units[i].qty
+                                              }
                                               label={
                                                 i === 0
                                                   ? `Quantity`
@@ -315,6 +441,7 @@ class EditProduct extends Component {
                                               variant="standard"
                                               label="Retail"
                                               error={this.state.new_unit_error}
+                                              value={this.state.units[i].retail}
                                               onChange={(e) => {
                                                 let units_change =
                                                   this.state.units;
@@ -335,6 +462,9 @@ class EditProduct extends Component {
                                               variant="standard"
                                               label="Wholesale"
                                               error={this.state.new_unit_error}
+                                              value={
+                                                this.state.units[i].wholesale
+                                              }
                                               onChange={(e) => {
                                                 let units_change =
                                                   this.state.units;
@@ -349,6 +479,22 @@ class EditProduct extends Component {
                                                 width: "95%",
                                               }}
                                             />
+                                          </td>
+                                          <td>
+                                            <Button
+                                              color="primary"
+                                              variant="outlined"
+                                              onClick={() => {
+                                                let units = this.state.units;
+                                                units.splice(i, 1);
+                                                this.setState({
+                                                  ...this.state,
+                                                  units,
+                                                });
+                                              }}
+                                            >
+                                              Remove
+                                            </Button>
                                           </td>
                                         </tr>
                                       );
@@ -405,36 +551,11 @@ class EditProduct extends Component {
                                       units[units.length - 1].retail &&
                                       units[units.length - 1].wholesale
                                     ) {
-                                      if (
-                                        parseInt(units[units.length - 1].qty) *
-                                          parseInt(
-                                            units[units.length - 2].retail
-                                          ) ===
-                                          parseInt(
-                                            units[units.length - 1].retail
-                                          ) ||
-                                        parseInt(units[units.length - 1].qty) *
-                                          parseInt(
-                                            units[units.length - 2].wholesale
-                                          ) ===
-                                          parseInt(
-                                            units[units.length - 1].wholesale
-                                          )
-                                      ) {
-                                        this.setState({
-                                          ...this.state,
-                                          units: [...this.state.units, {}],
-                                          new_unit_error: false,
-                                        });
-                                      } else {
-                                        this.setState({
-                                          ...this.state,
-                                          new_unit_error: true,
-                                          open: true,
-                                          message: "Unit Prices Mismatch",
-                                          messageState: "error",
-                                        });
-                                      }
+                                      this.setState({
+                                        ...this.state,
+                                        units: [...this.state.units, {}],
+                                        new_unit_error: false,
+                                      });
                                     } else {
                                       this.setState({
                                         ...this.state,

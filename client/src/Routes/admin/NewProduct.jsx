@@ -30,7 +30,7 @@ class NewProduct extends Component {
     super(props);
     this.state = {
       open: false,
-      open_dailog: false,
+      open_dialog: false,
       message: "Please Wait...",
       messageState: "",
       suppliers: [],
@@ -53,7 +53,7 @@ class NewProduct extends Component {
   }
 
   handleClose = () => {
-    this.setState({ ...this.state, open_dailog: false });
+    this.setState({ ...this.state, open_dialog: false });
   };
 
   handleUnit = async (e) => {
@@ -64,6 +64,18 @@ class NewProduct extends Component {
     fd.forEach((value, key) => {
       content[key] = value;
     });
+
+    if (!content["unit_name"]) {
+      this.setState({
+        ...this.state,
+        open: true,
+        message: "This field is missing",
+        messageState: "error",
+        empty_name_error: true,
+      });
+      return;
+    }
+
     let api = new FormsApi();
     let res = await api.post("/user/admin/new_unit", content);
     if (res.status === true) {
@@ -81,16 +93,6 @@ class NewProduct extends Component {
         message: res.data,
         messageState: "error",
       });
-      if (!content["unit_name"]) {
-        this.setState({
-          ...this.state,
-          open: true,
-          message: "This field is missing",
-          messageState: "error",
-          empty_name_error: true,
-        });
-        return;
-      }
     }
   };
 
@@ -111,13 +113,30 @@ class NewProduct extends Component {
       });
       return;
     }
-    if (!_fcontent["description"] || !_fcontent["generic_name"]) {
+    if (!_fcontent["generic_name"] || !_fcontent["re_order_qty"]) {
       this.setState({
         ...this.state,
         open: true,
-        message: "Some fields are missing",
+        message: "These Fields are missing",
         messageState: "error",
         empty_name_error: true,
+      });
+      return;
+    }
+    if (
+      !(
+        this.state.units[this.state.units.length - 1].selling_unit &&
+        this.state.units[this.state.units.length - 1].qty &&
+        this.state.units[this.state.units.length - 1].retail &&
+        this.state.units[this.state.units.length - 1].wholesale
+      )
+    ) {
+      this.setState({
+        ...this.state,
+        new_unit_error: true,
+        open: true,
+        message: "Some Fields are Missing",
+        messageState: "error",
       });
       return;
     }
@@ -213,7 +232,7 @@ class NewProduct extends Component {
                           onClick={(e) => {
                             this.setState({
                               ...this.state,
-                              open_dailog: true,
+                              open_dialog: true,
                             });
                           }}
                         >
@@ -222,11 +241,10 @@ class NewProduct extends Component {
                       </div>
                       <div className="">
                         <Button
-                          type="submit"
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginInline: 10 }}
+                          style={{ marginRight: 10 }}
                           onClick={() => {
                             window.location.reload();
                           }}
@@ -238,7 +256,7 @@ class NewProduct extends Component {
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginInline: 10 }}
+                          style={{ marginLeft: 10 }}
                         >
                           Save
                         </Button>
@@ -261,8 +279,40 @@ class NewProduct extends Component {
                                 margin: "20px",
                               }}
                             />
+                            <div
+                              className=""
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                width: "75%",
+                                margin: "20px",
+                              }}
+                            >
+                              <TextField
+                                error={this.state.empty_name_error}
+                                type="number"
+                                name="re_order_qty"
+                                variant="outlined"
+                                label="Re-order Qty"
+                                style={{ flex: 1, marginRight: "5px" }}
+                              />
+                              <TextField
+                                value={
+                                  this.state.units.length > 0 &&
+                                  this.state.units[this.state.units.length - 1]
+                                    .selling_unit
+                                    ? this.state.units[
+                                        this.state.units.length - 1
+                                      ].selling_unit
+                                    : ""
+                                }
+                                name="re_order_unit"
+                                variant="outlined"
+                                label="Unit"
+                                style={{ flex: 1, marginLeft: "5px" }}
+                              />
+                            </div>
                             <TextField
-                              error={this.state.empty_name_error}
                               name="description"
                               variant="outlined"
                               label="Medicine Description"
@@ -330,20 +380,24 @@ class NewProduct extends Component {
                                                 }}
                                               >
                                                 {this.state.selling_units
-                                                  .length === 0
-                                                  ? "No Unit Added"
-                                                  : this.state.selling_units.map(
-                                                      (v, i) => {
-                                                        return (
-                                                          <MenuItem
-                                                            value={v.unit_name}
-                                                            key={i}
-                                                          >
-                                                            {v.unit_name}
-                                                          </MenuItem>
-                                                        );
-                                                      }
-                                                    )}
+                                                  .length === 0 ? (
+                                                  <MenuItem value="no_unit">
+                                                    No Unit Added
+                                                  </MenuItem>
+                                                ) : (
+                                                  this.state.selling_units.map(
+                                                    (v, i) => {
+                                                      return (
+                                                        <MenuItem
+                                                          value={v.unit_name}
+                                                          key={i}
+                                                        >
+                                                          {v.unit_name}
+                                                        </MenuItem>
+                                                      );
+                                                    }
+                                                  )
+                                                )}
                                               </Select>
                                             </FormControl>
                                           </td>
@@ -412,6 +466,22 @@ class NewProduct extends Component {
                                               }}
                                             />
                                           </td>
+                                          <td>
+                                            <Button
+                                              color="primary"
+                                              variant="outlined"
+                                              onClick={() => {
+                                                let units = this.state.units;
+                                                units.splice(i, 1);
+                                                this.setState({
+                                                  ...this.state,
+                                                  units,
+                                                });
+                                              }}
+                                            >
+                                              Remove
+                                            </Button>
+                                          </td>
                                         </tr>
                                       );
                                     })
@@ -467,36 +537,11 @@ class NewProduct extends Component {
                                       units[units.length - 1].retail &&
                                       units[units.length - 1].wholesale
                                     ) {
-                                      if (
-                                        parseInt(units[units.length - 1].qty) *
-                                          parseInt(
-                                            units[units.length - 2].retail
-                                          ) ===
-                                          parseInt(
-                                            units[units.length - 1].retail
-                                          ) ||
-                                        parseInt(units[units.length - 1].qty) *
-                                          parseInt(
-                                            units[units.length - 2].wholesale
-                                          ) ===
-                                          parseInt(
-                                            units[units.length - 1].wholesale
-                                          )
-                                      ) {
-                                        this.setState({
-                                          ...this.state,
-                                          units: [...this.state.units, {}],
-                                          new_unit_error: false,
-                                        });
-                                      } else {
-                                        this.setState({
-                                          ...this.state,
-                                          new_unit_error: true,
-                                          open: true,
-                                          message: "Unit Prices Mismatch",
-                                          messageState: "error",
-                                        });
-                                      }
+                                      this.setState({
+                                        ...this.state,
+                                        units: [...this.state.units, {}],
+                                        new_unit_error: false,
+                                      });
                                     } else {
                                       this.setState({
                                         ...this.state,
@@ -524,7 +569,7 @@ class NewProduct extends Component {
         </div>
 
         <Dialog
-          open={this.state.open_dailog}
+          open={this.state.open_dialog}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
