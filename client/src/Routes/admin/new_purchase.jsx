@@ -562,19 +562,6 @@ function Finish({ t }) {
         }}
       />
       <TextField
-        name="discount"
-        variant="outlined"
-        label="Discount"
-        type="number"
-        onChange={(e) => {
-          setDiscount(parseInt(e.target.value) || 0);
-        }}
-        style={{
-          width: "75%",
-          margin: "20px",
-        }}
-      />
-      <TextField
         name="pay_amount"
         variant="outlined"
         label="Amount to Be Paid"

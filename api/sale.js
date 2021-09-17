@@ -3,12 +3,9 @@ const { NULL } = require("mysql8/lib/protocol/constants/types");
 const { nanoid } = require("nanoid");
 const conn = require("../database/db");
 
-//printer
-
-//printer
-
 router.post("/new_product", async (req, res) => {
-  let { generic_name, description, units, date } = req.body;
+  let { generic_name, description, units, date, re_order_qty, re_order_unit } =
+    req.body;
   let units_arr = [];
   for (let i = 0; i < units.length; i++) {
     let unit = units[i];
@@ -21,10 +18,10 @@ router.post("/new_product", async (req, res) => {
       }
     }
   }
+
   conn.query(
-    `SELECT * FROM products_tbl WHERE product_generic_name = ? 
-    AND product_description_name = ?`,
-    [generic_name, description],
+    `SELECT * FROM products_tbl WHERE product_generic_name = ?`,
+    [generic_name],
     (first_err, first_res) => {
       if (first_err) {
         console.log(first_err);
@@ -32,17 +29,20 @@ router.post("/new_product", async (req, res) => {
       } else {
         first_res.length > 0
           ? res.send({
-              data: "This product and description. Already exists.",
+              data: "This product, Already exists.",
               status: false,
             })
           : conn.query(
               `INSERT INTO products_tbl SET ?`,
               {
                 product_generic_name: generic_name,
-                product_description_name: description,
+                product_description_name: description || " ",
                 product_units: JSON.stringify(units_arr),
                 product_qty: 0,
                 product_date: date,
+                product_re_order:
+                  parseInt(re_order_qty) *
+                    units_arr[units_arr.length - 1].qty || 0,
               },
               (err, result) => {
                 if (err) {
@@ -557,6 +557,24 @@ router.post("/new_purchase", async (req, res) => {
   );
 });
 
+//selects product for edit
+
+router.get("/product/:id", async (req, res) => {
+  conn.query(
+    `SELECT * FROM products_tbl 
+    WHERE product_id = ?`,
+    [req.params.id],
+    (err, result) => {
+      if (err) {
+        throw err;
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+//selects product for edit
+
 router.post("/edit_product/:id", async (req, res) => {
   conn.query(
     `SELECT * FROM products_tbl WHERE product_id = ?`,
@@ -566,25 +584,41 @@ router.post("/edit_product/:id", async (req, res) => {
         console.log(err_first);
         res.send({ data: "An Error Occured", status: false });
       } else {
-        conn.query(
-          `UPDATE products_tbl SET ? WHERE product_id =?`,
-          [
-            {
-              product_generic_name: req.body.generic_name,
-              product_description_name: req.body.description,
-              product_units:
-                req.body.units.length === 0
-                  ? res_first[0].product_units
-                  : req.body.units,
-            },
-            req.params.id,
-          ],
-          (first_err, first_res) => {
-            if (first_err) {
-              console.log(first_err);
-              res.send({ data: "An Error Occured. Try Again", status: false });
+        let { generic_name, description, units, re_order_qty } = req.body;
+        let units_arr = [];
+        for (let i = 0; i < units.length; i++) {
+          let unit = units[i];
+          if (unit.qty && unit.selling_unit) {
+            if (i === 0) {
+              units_arr.push(unit);
             } else {
-              res.send({ data: "Product Updated Successfully", status: true });
+              unit.qty =
+                parseInt(units_arr[i - 1].qty) * parseInt(units[i].qty);
+              units_arr.push(unit);
+            }
+          }
+        }
+        conn.query(
+          `UPDATE products_tbl SET ? WHERE product_id = ?`,
+          {
+            product_generic_name: generic_name,
+            product_description_name: description || " ",
+            product_units: JSON.stringify(units_arr),
+            product_re_order:
+              parseInt(re_order_qty) * units_arr[units_arr.length - 1].qty || 0,
+          },
+          (err, result) => {
+            if (err) {
+              console.log(err);
+              res.send({
+                data: "An Error Occured. Try Again",
+                status: false,
+              });
+            } else {
+              res.send({
+                data: "Product Updated....",
+                status: true,
+              });
             }
           }
         );

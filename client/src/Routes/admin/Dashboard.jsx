@@ -94,6 +94,15 @@ class Dashboard extends Component {
     this.setState({ ...this.state, AnchorElDrugs: null });
   };
 
+  IsJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   render() {
     return (
       <>
@@ -178,17 +187,17 @@ class Dashboard extends Component {
                     >
                       <Link to="/new-product">
                         <MenuItem onClick={this.handleCloseActionsDrugs}>
-                          New Product
+                          New Medicine
                         </MenuItem>
                       </Link>
                       <Link to="/all-products">
                         <MenuItem onClick={this.handleCloseActionsDrugs}>
-                          See All Products
+                          Medicines
                         </MenuItem>
                       </Link>
                       <Link to="/all-batches">
                         <MenuItem onClick={this.handleCloseActionsDrugs}>
-                          See All Batches
+                          Medicine Batches
                         </MenuItem>
                       </Link>
                     </Menu>
@@ -230,7 +239,7 @@ class Dashboard extends Component {
               <div className="projects">
                 <div className="card">
                   <div className="card-header">
-                    <h3>Quantity Less</h3>
+                    <h3>Quantity Less Re-order Level</h3>
                     <div className="">
                       <Button
                         variant="contained"
@@ -292,9 +301,10 @@ class Dashboard extends Component {
                     <table width="100%">
                       <thead>
                         <tr>
-                          <td>No.</td>
                           <td>Name</td>
+                          <td>Re-order Level</td>
                           <td>Quantity</td>
+                          <td>Unit</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -306,14 +316,20 @@ class Dashboard extends Component {
                           this.state.less_qty_pdts.map((v, i) => {
                             return (
                               <tr key={i}>
-                                <td>{i + 1}</td>
                                 <td className="name_cell">
                                   {`
                                   ${v.product_generic_name}
                                   ${v.product_description_name}
                                   `}
                                 </td>
+                                <td>{v.product_re_order}</td>
                                 <td>{v.product_qty}</td>
+                                <td>
+                                  {this.IsJsonString(v.product_units)
+                                    ? JSON.parse(v.product_units)[0]
+                                        .selling_unit
+                                    : "No Product Units"}
+                                </td>
                               </tr>
                             );
                           })

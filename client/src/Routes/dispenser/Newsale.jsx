@@ -20,19 +20,6 @@ import UsersApi from "../../api/users";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import qz from "qz-tray";
 
-//print image:
-import PrintImage from "../../assets/logo_hospital.png";
-
-//print
-
-/* <script type="text/javascript" src="js/dependencies/rsvp-3.1.0.min.js"></script>
-<script type="text/javascript" src="js/dependencies/sha-256.min.js"></script>
-<script type="text/javascript" src="js/qz-tray.js"></script> */
-
-//print
-
-//print
-
 import "../../design/main.css";
 import "../../design/forms.css";
 import "../../design/print_sale.css";
@@ -52,8 +39,8 @@ class NewSale extends Component {
       messageState: "",
       print: true,
       _content: {},
-      form_visible: false,
       active_product_qty: 0,
+      active_product_re_order: 0,
       over_qty_error: false,
       active_sale_type: "retail",
       active_selling_unit: "",
@@ -163,9 +150,9 @@ class NewSale extends Component {
         messageState: "success",
         finish_btn_disabled: false,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 700);
     } else {
       this.setState({
         ...this.state,
@@ -273,6 +260,17 @@ class NewSale extends Component {
             () => {
               this.setState({
                 ...this.state,
+                active_product_re_order:
+                  (this.state.active_selling_unit ===
+                  JSON.parse(this.state.active_drug.product_units)[0]
+                    .selling_unit
+                    ? parseInt(this.state.active_drug.product_re_order)
+                    : parseInt(this.state.active_drug.product_re_order) /
+                      parseInt(
+                        JSON.parse(this.state.active_drug.product_units).find(
+                          (el) => el.selling_unit === e.target.value
+                        )["qty"]
+                      )) || 0,
                 active_product_qty:
                   this.state.active_selling_unit ===
                   JSON.parse(this.state.active_drug.product_units)[0]
@@ -511,6 +509,18 @@ class NewSale extends Component {
                                 margin: "20px",
                               }}
                             />
+                            <TextField
+                              disabled={this.state.active_drug ? false : true}
+                              type="number"
+                              name="qty_re_order"
+                              variant="outlined"
+                              label="Re-order Quantity"
+                              value={this.state.active_product_re_order}
+                              style={{
+                                width: "85%",
+                                margin: "20px",
+                              }}
+                            />
                           </div>
                           <div className="inpts_on_right">
                             <FormControl
@@ -549,6 +559,29 @@ class NewSale extends Component {
                                     () => {
                                       this.setState({
                                         ...this.state,
+                                        active_product_re_order:
+                                          (this.state.active_selling_unit ===
+                                          JSON.parse(
+                                            this.state.active_drug.product_units
+                                          )[0].selling_unit
+                                            ? parseInt(
+                                                this.state.active_drug
+                                                  .product_re_order
+                                              )
+                                            : parseInt(
+                                                this.state.active_drug
+                                                  .product_re_order
+                                              ) /
+                                              parseInt(
+                                                JSON.parse(
+                                                  this.state.active_drug
+                                                    .product_units
+                                                ).find(
+                                                  (el) =>
+                                                    el.selling_unit ===
+                                                    e.target.value
+                                                )["qty"]
+                                              )) || 0,
                                         active_product_qty:
                                           this.state.active_selling_unit ===
                                           JSON.parse(
@@ -704,6 +737,7 @@ class NewSale extends Component {
                     hidden
                     value={this.state.active_sale_type}
                     name="sale_type"
+                    onChange={() => {}}
                   />
                 </form>
               </div>

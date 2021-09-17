@@ -35,7 +35,7 @@ router.get("/purchases", async (req, res) => {
 router.get("/units", async (req, res) => {
   conn.query(
     `SELECT * FROM 
-  selling_units_tbl`,
+  selling_units_tbl ORDER BY unit_name`,
     (err_first, res_first) => {
       if (err_first) throw err_first;
       res.send(res_first);
@@ -92,7 +92,11 @@ router.get("/my_sales/:id", async (req, res) => {
 
 router.get("/less_qty", (req, res) => {
   conn.query(
-    "select * from products_tbl order by product_qty,product_generic_name limit 15",
+    // "select * from products_tbl order by product_qty,product_generic_name limit 15",
+    `SELECT * FROM products_tbl 
+        WHERE
+      product_re_order >= product_qty 
+        ORDER BY product_generic_name LIMIT 15`,
     (error, result) => {
       if (error) {
         throw error;
