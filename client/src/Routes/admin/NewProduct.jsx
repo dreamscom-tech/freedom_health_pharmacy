@@ -111,11 +111,11 @@ class NewProduct extends Component {
       });
       return;
     }
-    if (!_fcontent["description"] || !_fcontent["generic_name"]) {
+    if (!_fcontent["generic_name"]) {
       this.setState({
         ...this.state,
         open: true,
-        message: "Some fields are missing",
+        message: "The Generic Name is missing",
         messageState: "error",
         empty_name_error: true,
       });
@@ -262,7 +262,6 @@ class NewProduct extends Component {
                               }}
                             />
                             <TextField
-                              error={this.state.empty_name_error}
                               name="description"
                               variant="outlined"
                               label="Medicine Description"
@@ -297,7 +296,7 @@ class NewProduct extends Component {
                                             <FormControl
                                               error={this.state.new_unit_error}
                                               variant="standard"
-                                              label="supplier"
+                                              label="selling_unit"
                                               style={{
                                                 width: "95%",
                                               }}
