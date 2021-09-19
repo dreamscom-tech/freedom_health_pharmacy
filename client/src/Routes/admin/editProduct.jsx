@@ -776,8 +776,17 @@ class EditProduct extends Component {
                               value={
                                 this.state.product.product_generic_name
                                   ? this.state.product.product_generic_name
-                                  : "..."
+                                  : ""
                               }
+                              onChange={(e) => {
+                                this.setState({
+                                  ...this.state,
+                                  product: {
+                                    ...this.state.product,
+                                    product_generic_name: e.target.value,
+                                  },
+                                });
+                              }}
                               style={{
                                 width: "75%",
                                 margin: "20px",
@@ -831,7 +840,7 @@ class EditProduct extends Component {
                               value={
                                 this.state.product.product_description_name
                                   ? this.state.product.product_description_name
-                                  : "..."
+                                  : " "
                               }
                               onChange={(e) => {
                                 this.setState({

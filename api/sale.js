@@ -600,13 +600,18 @@ router.post("/edit_product/:id", async (req, res) => {
         }
         conn.query(
           `UPDATE products_tbl SET ? WHERE product_id = ?`,
-          {
-            product_generic_name: generic_name,
-            product_description_name: description || " ",
-            product_units: JSON.stringify(units_arr),
-            product_re_order:
-              parseInt(re_order_qty) * units_arr[units_arr.length - 1].qty || 0,
-          },
+          [
+            {
+              product_generic_name: generic_name,
+              product_description_name: description || " ",
+              product_units: JSON.stringify(units_arr),
+              product_re_order:
+                parseInt(re_order_qty) * units_arr[units_arr.length - 1].qty ||
+                0,
+            },
+            parseInt(req.params.id),
+          ],
+
           (err, result) => {
             if (err) {
               console.log(err);
