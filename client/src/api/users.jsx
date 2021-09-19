@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const url = "http://localhost:5050/api";
-const url = "https://freedomhealth.herokuapp.com/api";
+const url = "http://localhost:5050/api";
+// const url = "https://freedomhealth.herokuapp.com/api";
 
 export default class UsersApi {
   ///new Login

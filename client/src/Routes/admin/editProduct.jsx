@@ -499,7 +499,7 @@ class EditProduct extends Component {
     super(props);
     this.state = {
       open: false,
-      open_dailog: false,
+      open_dialog: false,
       message: "Please Wait...",
       messageState: "",
       suppliers: [],
@@ -512,19 +512,8 @@ class EditProduct extends Component {
     };
     this.units();
   }
-
-  async units() {
-    const res = (await UsersApi.data("/user/all/units")) || [];
-    if (res) {
-      this.setState({
-        ...this.state,
-        selling_units: res === "Error" ? [] : res,
-      });
-    }
-  }
-
   handleClose = () => {
-    this.setState({ ...this.state, open_dailog: false });
+    this.setState({ ...this.state, open_dialog: false });
   };
 
   handleUnit = async (e) => {
@@ -535,6 +524,16 @@ class EditProduct extends Component {
     fd.forEach((value, key) => {
       content[key] = value;
     });
+    if (!content["unit_name"]) {
+      this.setState({
+        ...this.state,
+        open: true,
+        message: "This field is missing",
+        messageState: "error",
+        empty_name_error: true,
+      });
+      return;
+    }
     let api = new FormsApi();
     let res = await api.post("/user/admin/new_unit", content);
     if (res.status === true) {
@@ -552,29 +551,78 @@ class EditProduct extends Component {
         message: res.data,
         messageState: "error",
       });
-      if (!content["unit_name"]) {
-        this.setState({
-          ...this.state,
-          open: true,
-          message: "This field is missing",
-          messageState: "error",
-          empty_name_error: true,
-        });
-        return;
-      }
     }
   };
+  async units() {
+    const res = (await UsersApi.data("/user/all/units")) || [];
+    if (res) {
+      this.setState(
+        {
+          ...this.state,
+          selling_units: res === "Error" ? [] : res,
+        },
+        () => {
+          this.product();
+        }
+      );
+    }
+  }
+
+  //if json string
+  IsJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+  //if json string
 
   async product() {
     let id = parseInt(
       new URLSearchParams(window.location.search).get("product-id")
     );
-    const res = await UsersApi.data(`/user/all/product/${id}`);
-    if (res) {
-      this.setState({ ...this.state, product: res === "Error" ? {} : [res] });
+    const product = await UsersApi.data(`/user/all/product/${id}`);
+    if (product) {
+      if (product !== "Error") {
+        const res = product[0];
+        console.log(res);
+        this.setState({ ...this.state, product: res });
+        const units = this.IsJsonString(res.product_units)
+          ? JSON.parse(res.product_units)
+          : [];
+        const re_order =
+          units.length === 0
+            ? 0
+            : (parseInt(res.product_re_order) || 0) /
+                parseInt(units[units.length - 1].qty) || 0;
+        let units_arr = [];
+        for (let i = 0; i < units.length; i++) {
+          let unit = units[i];
+          if (unit.qty && unit.selling_unit) {
+            if (i === 0) {
+              units_arr.push(unit);
+            } else {
+              unit.qty =
+                parseInt(units[i].qty) / parseInt(units_arr[i - 1].qty);
+              units_arr.push(unit);
+            }
+          }
+        }
+        this.setState(
+          {
+            ...this.state,
+            units: units_arr,
+            re_order,
+          },
+          () => {
+            console.log(this.state);
+          }
+        );
+      }
     }
   }
-
   handleSubmit = async (e) => {
     e.preventDefault();
     this.setState({ ...this.state, open: true, messageState: "info" });
@@ -626,56 +674,6 @@ class EditProduct extends Component {
       });
     }
   };
-
-  // handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   this.setState({ ...this.state, open: true, messageState: "info" });
-  //   const fd = new FormData(e.target);
-  //   let _fcontent = {};
-  //   fd.forEach((value, key) => {
-  //     _fcontent[key] = value;
-  //   });
-  //   if (this.state.units.length === 0) {
-  //     this.setState({
-  //       ...this.state,
-  //       open: true,
-  //       message: "No Selling Units Registered",
-  //       messageState: "error",
-  //     });
-  //     return;
-  //   }
-  //   if (!_fcontent["description"] || !_fcontent["generic_name"]) {
-  //     this.setState({
-  //       ...this.state,
-  //       open: true,
-  //       message: "Some fields are missing",
-  //       messageState: "error",
-  //       empty_name_error: true,
-  //     });
-  //     return;
-  //   }
-  //   _fcontent["units"] = this.state.units;
-  //   _fcontent["date"] = Date.now();
-  //   let api = new FormsApi();
-  //   let res = await api.post("/user/sale/new_product", _fcontent);
-
-  //   if (res.status === true) {
-  //     this.setState({
-  //       ...this.state,
-  //       message: res.data,
-  //       messageState: "success",
-  //     });
-  //     setTimeout(() => {
-  //       window.location.reload();
-  //     }, 200);
-  //   } else {
-  //     this.setState({
-  //       ...this.state,
-  //       message: res.data,
-  //       messageState: "error",
-  //     });
-  //   }
-  // };
 
   closePopUp = (event, reason) => {
     if (reason === "clickaway") {
@@ -745,7 +743,7 @@ class EditProduct extends Component {
                           onClick={(e) => {
                             this.setState({
                               ...this.state,
-                              open_dailog: true,
+                              open_dialog: true,
                             });
                           }}
                         >
@@ -758,21 +756,9 @@ class EditProduct extends Component {
                           aria-describedby={this.id}
                           variant="contained"
                           color="primary"
-                          style={{ marginRight: 10 }}
-                          onClick={() => {
-                            window.location.reload();
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          aria-describedby={this.id}
-                          variant="contained"
-                          color="primary"
                           style={{ marginLeft: 10 }}
                         >
-                          Save
+                          Finish &amp; Save
                         </Button>
                       </div>
                     </div>
@@ -787,6 +773,11 @@ class EditProduct extends Component {
                               name="generic_name"
                               variant="outlined"
                               label="Generic Name"
+                              value={
+                                this.state.product.product_generic_name
+                                  ? this.state.product.product_generic_name
+                                  : "..."
+                              }
                               style={{
                                 width: "75%",
                                 margin: "20px",
@@ -837,6 +828,20 @@ class EditProduct extends Component {
                               name="description"
                               variant="outlined"
                               label="Medicine Description"
+                              value={
+                                this.state.product.product_description_name
+                                  ? this.state.product.product_description_name
+                                  : "..."
+                              }
+                              onChange={(e) => {
+                                this.setState({
+                                  ...this.state,
+                                  product: {
+                                    ...this.state.product,
+                                    product_description_name: e.target.value,
+                                  },
+                                });
+                              }}
                               style={{
                                 width: "75%",
                                 margin: "20px",
@@ -1097,7 +1102,7 @@ class EditProduct extends Component {
         </div>
 
         <Dialog
-          open={this.state.open_dailog}
+          open={this.state.open_dialog}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >

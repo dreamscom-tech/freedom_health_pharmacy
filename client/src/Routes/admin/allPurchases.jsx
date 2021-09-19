@@ -69,7 +69,7 @@ class AllPurchases extends Component {
     return (
       <>
         <input type="checkbox" id="nav-toggle" defaultChecked />
-        <Nav active="dashboard" />
+        <Nav active="finance" />
         <div className="main-content">
           <Header />
           <main>
