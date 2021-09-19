@@ -150,9 +150,9 @@ class NewSale extends Component {
         messageState: "success",
         finish_btn_disabled: false,
       });
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 700);
+      setTimeout(() => {
+        window.location.reload();
+      }, 700);
     } else {
       this.setState({
         ...this.state,

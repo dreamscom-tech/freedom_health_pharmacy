@@ -150,9 +150,9 @@ class NewSale extends Component {
         messageState: "success",
         finish_btn_disabled: false,
       });
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 700);
+      setTimeout(() => {
+        window.location.reload();
+      }, 700);
     } else {
       this.setState({
         ...this.state,
@@ -511,6 +511,22 @@ class NewSale extends Component {
                             />
                             <TextField
                               disabled={this.state.active_drug ? false : true}
+                              helperText={
+                                this.state.active_drug
+                                  ? this.state.active_product_re_order >=
+                                    this.state.active_product_qty
+                                    ? "Purchase Needed For This Drug"
+                                    : ""
+                                  : ""
+                              }
+                              error={
+                                this.state.active_drug
+                                  ? this.state.active_product_re_order >=
+                                    this.state.active_product_qty
+                                    ? true
+                                    : ""
+                                  : ""
+                              }
                               type="number"
                               name="qty_re_order"
                               variant="outlined"
