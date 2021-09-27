@@ -11,53 +11,6 @@ export default class RawPrint {
     const amount_paid = parseInt(v.pay_amount);
     const customer = v.customer;
     const sale = v.sale_type;
-    // return [
-    //   "\x1B" + "\x40", // init
-    //   "\x1B" + "\x61" + "\x31", // center align
-    //   "Beverly Hills, CA  90210" + "\x1B" + "\x74" + "\x13" + "\xAA" + "\x0A",
-    //   "\x0A", // line break
-    //   "www.qz.io" + "\x0A", // text and line break
-    //   "\x0A", // line break
-    //   "\x0A", // line break
-    //   "May 18, 2016 10:30 AM" + "\x0A",
-    //   "\x0A", // line break
-    //   "\x0A", // line break
-    //   "\x0A",
-    //   "Transaction # 123456 Register: 3" + "\x0A",
-    //   "\x0A",
-    //   "\x0A",
-    //   "\x0A",
-    //   "\x1B" + "\x61" + "\x30", // left align
-    //   "Baklava (Qty 4)       9.00" + "\x1B" + "\x74" + "\x13" + "\xAA", //print special char symbol after numeric
-    //   "\x0A",
-    //   "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" + "\x0A",
-    //   "\x1B" + "\x45", // bold on
-    //   "Here's some bold text!",
-    //   "\x1B" + "\x45" + "\x0A", // bold off
-    //   "\x0A" + "\x0A",
-    //   "\x1B" + "\x61" + "\x32", // right align
-    //   "\x1B" + "\x21" + "\x30", // em mode on
-    //   "DRINK ME",
-    //   "\x1B" + "\x21" + "\x0A" + "\x1B" + "\x45" + "\x0A", // em mode off
-    //   "\x0A" + "\x0A",
-    //   "\x1B" + "\x61" + "\x30", // left align
-    //   "------------------------------------------" + "\x0A",
-    //   "\x1B" + "\x4D" + "\x31", // small text
-    //   "EAT ME" + "\x0A",
-    //   "\x1B" + "\x4D" + "\x30", // normal text
-    //   "------------------------------------------" + "\x0A",
-    //   "normal text",
-    //   "\x1B" + "\x61" + "\x30", // left align
-    //   "\x0A" + "\x0A" + "\x0A" + "\x0A" + "\x0A" + "\x0A" + "\x0A",
-    //   "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
-    //   // "\x1B" + "\x69", // cut paper (old syntax)
-    //   // '\x1D' + '\x56'  + '\x00' // full cut (new syntax)
-    //   // '\x1D' + '\x56'  + '\x30' // full cut (new syntax)
-    //   // '\x1D' + '\x56'  + '\x01' // partial cut (new syntax)
-    //   // '\x1D' + '\x56'  + '\x31' // partial cut (new syntax)
-    //   "\x10" + "\x14" + "\x01" + "\x00" + "\x05", // Generate Pulse to kick-out cash drawer**
-    //   // **for legacy drawer cable CD-005A.  Research before using.
-    // ];
     //functions
     const getDate = () => {
       let month =
@@ -94,63 +47,125 @@ export default class RawPrint {
     };
     // `${customer ? `Customer:  ${customer}` : ""}`,
     //functions
-    let data = [
-      "------------------------------------------------",
-      "                                                ",
-      "FREEDOM HEALTH AND SUPPLIES LTD                 ",
-      "Plot 7, Chegere Road Apac                       ",
-      "P.O.Box 120 Apac                                ",
-      "Tel: 0393 193 423                               ",
-      "                                                ",
-      "SALES RECEIPT                                   ",
-      "                                                ",
-      "Date: " + getDate() + "                                ",
-      "                                                ",
-      "------------------------------------------------",
-      "Name                  Qty   Unit     Amount(Shs)",
-    ];
+    if (customer) {
+      let data = [
+        "------------------------------------------------",
+        "                                                ",
+        "FREEDOM HEALTH AND SUPPLIES LTD                 ",
+        "Plot 7, Chegere Road Apac                       ",
+        "P.O.Box 120 Apac                                ",
+        "Tel: 0393 193 423                               ",
+        "                                                ",
+        "SALES RECEIPT                                   ",
+        "                                                ",
+        "Date: " + getDate() + "                                ",
+        "                                                ",
+        "------------------------------------------------",
+        "Name                  Qty   Unit     Amount(Shs)",
+      ];
 
-    values.forEach((v, i) => {
-      data.push(
-        `${getNameSpaces(v.product_name, 21)}${getNameSpaces(
-          v.qty,
-          5
-        )}${getNameSpaces(v.selling_unit, 8)}${getNameSpaces(
-          (parseInt(v.product_price) * parseInt(v.qty)).toString(),
-          10
-        )}`
-      );
-    });
-    let data_with_footer = [
-      ...data,
-      "------------------------------------------------",
-      `Sale          ${getNameSpaces(sale, 10)}                       `,
-      `Total         UGX: ${getNameSpaces(
-        total_amount.toString(),
-        8
-      )}                    `,
-      `Discount      UGX: ${getNameSpaces(
-        discount.toString(),
-        8
-      )}                    `,
-      `Paid          UGX: ${getNameSpaces(
-        amount_paid.toString(),
-        8
-      )}                    `,
-      "                                                ",
-      "Thank You                                       ",
-      `Served By: ${getNameSpaces(
-        user.user.user_first_name,
-        19
-      )}                 `,
-      "Be Healthy, Be Happy                            ",
-      "                                                ",
-      "------------------------------------------------",
-    ];
-    // "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
+      values.forEach((v, i) => {
+        data.push(
+          `${getNameSpaces(v.product_name, 21)}${getNameSpaces(
+            v.qty,
+            5
+          )}${getNameSpaces(v.selling_unit, 8)}${getNameSpaces(
+            (parseInt(v.product_price) * parseInt(v.qty)).toString(),
+            10
+          )}`
+        );
+      });
+      let data_with_footer = [
+        ...data,
+        "------------------------------------------------",
+        `Sale          ${getNameSpaces(sale, 10)}                       `,
+        `Total         UGX: ${getNameSpaces(
+          total_amount.toString(),
+          8
+        )}                    `,
+        `Discount      UGX: ${getNameSpaces(
+          discount.toString(),
+          8
+        )}                    `,
+        `Paid          UGX: ${getNameSpaces(
+          amount_paid.toString(),
+          8
+        )}                    `,
+        "                                                ",
+        `Customer: ${getNameSpaces(customer, 24)}             `,
+        "                                                ",
+        "Thank You                                       ",
+        `Served By: ${getNameSpaces(
+          user.user.user_first_name,
+          19
+        )}                 `,
+        "Be Healthy, Be Happy                            ",
+        "                                                ",
+        "------------------------------------------------",
+      ];
+      // "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
 
-    // return data;
-    return data_with_footer;
+      // return data;
+      return data_with_footer;
+    } else {
+      let data = [
+        "------------------------------------------------",
+        "                                                ",
+        "FREEDOM HEALTH AND SUPPLIES LTD                 ",
+        "Plot 7, Chegere Road Apac                       ",
+        "P.O.Box 120 Apac                                ",
+        "Tel: 0393 193 423                               ",
+        "                                                ",
+        "SALES RECEIPT                                   ",
+        "                                                ",
+        "Date: " + getDate() + "                                ",
+        "                                                ",
+        "------------------------------------------------",
+        "Name                  Qty   Unit     Amount(Shs)",
+      ];
+
+      values.forEach((v, i) => {
+        data.push(
+          `${getNameSpaces(v.product_name, 21)}${getNameSpaces(
+            v.qty,
+            5
+          )}${getNameSpaces(v.selling_unit, 8)}${getNameSpaces(
+            (parseInt(v.product_price) * parseInt(v.qty)).toString(),
+            10
+          )}`
+        );
+      });
+      let data_with_footer = [
+        ...data,
+        "------------------------------------------------",
+        `Sale          ${getNameSpaces(sale, 10)}                       `,
+        `Total         UGX: ${getNameSpaces(
+          total_amount.toString(),
+          8
+        )}                    `,
+        `Discount      UGX: ${getNameSpaces(
+          discount.toString(),
+          8
+        )}                    `,
+        `Paid          UGX: ${getNameSpaces(
+          amount_paid.toString(),
+          8
+        )}                    `,
+        "                                                ",
+        "Thank You                                       ",
+        `Served By: ${getNameSpaces(
+          user.user.user_first_name,
+          19
+        )}                 `,
+        "Be Healthy, Be Happy                            ",
+        "                                                ",
+        "------------------------------------------------",
+      ];
+      // "\x1B" + "\x45" + "\x4d" + "\x20" + "\x34",
+
+      // return data;
+      return data_with_footer;
+    }
   };
 }
 

@@ -359,7 +359,7 @@ router.post("/new_sale", async (req, res) => {
       amount_paid: parseFloat(pay_amount),
       sales_date: date,
       sale_made_by: user,
-      customer_id: parseInt(customer) || NULL,
+      customer: customer || NULL,
     },
     (insert_err, insert_res) => {
       if (insert_err) {
