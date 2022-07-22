@@ -1,2 +1,4 @@
 # RXplus
-Pharmacy System In Uganda
+Pharmacy Management System.
+
+Contact: info@dreamscom.tech
