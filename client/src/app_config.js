@@ -5,4 +5,4 @@ const user = {
   user: tokenFrom ? tokenFrom : {},
 };
 
-export default user;
+export default { ...user, user_role: "admin" };

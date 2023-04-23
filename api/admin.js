@@ -2,20 +2,21 @@ const router = require("express").Router();
 const conn = require("../database/db");
 
 router.post("/login", async (req, res) => {
-  conn.query(
-    `SELECT * FROM users_tbl WHERE username = ? AND user_password = ?`,
-    [req.body.username, req.body.password],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        res.send({ status: false });
-      } else {
-        result.length == 0
-          ? res.send({ status: false })
-          : res.send({ status: true, user: result[0] });
-      }
-    }
-  );
+  res.send({ status: true, user: { username: req.body.username } });
+  // conn.query(
+  //   `SELECT * FROM users_tbl WHERE username = ? AND user_password = ?`,
+  //   [req.body.username, req.body.password],
+  //   (err, result) => {
+  //     if (err) {
+  //       console.log(err);
+  //       res.send({ status: false });
+  //     } else {
+  //       result.length == 0
+  //         ? res.send({ status: false })
+  //         : res.send({ status: true, user: result[0] });
+  //     }
+  //   }
+  // );
 });
 
 router.post("/new_user", async (req, res) => {

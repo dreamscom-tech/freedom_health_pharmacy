@@ -13,9 +13,9 @@ const mysql = require("mysql8");
 //   },
 // };
 const MYSQL_CONFIG = {
-  host: "104.198.133.80",
-  user: "dreamscom",
-  password: "dreamscom",
+  host: "127.0.0.1",
+  user: "root",
+  password: "",
   database: "fhp",
   // ssl: {
   //   ca: fs.readFileSync(path.join(__dirname, "client-key.pem")),

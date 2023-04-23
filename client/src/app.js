@@ -14,7 +14,7 @@ class App extends Component {
   }
 
   render() {
-    if (user.user.user_role === "admin") {
+    if (user.user_role === "admin") {
       return <Admin />;
     } else if (user.user.user_role === "dispenser") {
       return <Dispenser />;
